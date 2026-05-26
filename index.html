@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Propuesta de Transformación Digital · Okara</title>
+<meta name="description" content="Propuesta exclusiva de transformación digital para Okara · Clínica Estética. Tres caminos pensados para llevar su presencia digital al nivel de su clínica." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ivory:'#FAF7F2', bone:'#F1ECE3', sand:'#E6DFD2',
+          mocha:'#8E7C68', cocoa:'#3F352B', night:'#1C1814',
+          gold:'#B89968', golden:'#D4B98A', paper:'#FBFAF7'
+        },
+        fontFamily: {
+          serif:['"Cormorant Garamond"','serif'],
+          sans:['Inter','system-ui','sans-serif']
+        },
+        letterSpacing: { 'ultra':'.32em' }
+      }
+    }
+  }
+</script>
+
+<style>
+  html { scroll-behavior: smooth; }
+  body { background:#FBFAF7; color:#1C1814; font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; }
+  .font-display { font-family:'Cormorant Garamond',serif; font-weight:400; }
+  .num-tag { letter-spacing:.32em; font-size:11px; color:#8E7C68; text-transform:uppercase; }
+  .hairline { height:1px; background: linear-gradient(to right, transparent, rgba(28,24,20,.2), transparent); }
+
+  /* Reveal animation (fade-in-up) */
+  .reveal { opacity:0; transform: translateY(32px); transition: opacity 1s cubic-bezier(.22,.61,.36,1), transform 1s cubic-bezier(.22,.61,.36,1); }
+  .reveal.in { opacity:1; transform:none; }
+  .reveal.delay-1 { transition-delay:.12s; }
+  .reveal.delay-2 { transition-delay:.24s; }
+  .reveal.delay-3 { transition-delay:.36s; }
+
+  /* Nav scroll */
+  .nav-scrolled { background: rgba(251,250,247,.88); backdrop-filter: saturate(140%) blur(14px); border-bottom: 1px solid rgba(28,24,20,.06); }
+
+  /* Hero subtle texture */
+  .hero-bg {
+    background:
+      radial-gradient(circle at 20% 10%, rgba(184,153,104,.10), transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(184,153,104,.08), transparent 45%),
+      linear-gradient(180deg, #FBFAF7 0%, #F1ECE3 100%);
+  }
+
+  /* Mockup frame */
+  .mockup-frame {
+    background:#fff;
+    border-radius:14px;
+    box-shadow:
+      0 30px 60px -30px rgba(28,24,20,.25),
+      0 0 0 1px rgba(28,24,20,.05);
+    overflow:hidden;
+  }
+  .mockup-chrome {
+    display:flex; align-items:center; gap:.5rem;
+    padding:.75rem 1rem;
+    background:#F8F5EE;
+    border-bottom:1px solid #EFE9DE;
+  }
+  .mockup-chrome .dot { width:10px; height:10px; border-radius:50%; }
+  .mockup-chrome .url {
+    flex:1; margin-left:.75rem;
+    font-family:'Inter',sans-serif; font-size:11px; color:#8E7C68;
+    background:#fff; border:1px solid #EFE9DE; border-radius:6px;
+    padding:.25rem .75rem; text-align:center;
+  }
+  .mockup-body {
+    aspect-ratio: 16 / 10;
+    background:
+      linear-gradient(135deg, #F1ECE3 0%, #FAF7F2 100%);
+    position:relative;
+    overflow:hidden;
+  }
+  .mockup-body.tall { aspect-ratio: 4 / 5; }
+  .mockup-placeholder {
+    position:absolute; inset:0;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    gap:.5rem; color:#8E7C68;
+    text-align:center; padding:2rem;
+  }
+  .mockup-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+
+  /* Floating annotations */
+  .annotation {
+    position:absolute;
+    background:#fff;
+    border:1px solid #E6DFD2;
+    border-radius:12px;
+    padding:.8rem 1rem;
+    box-shadow: 0 18px 40px -18px rgba(28,24,20,.3);
+    max-width:240px;
+    transform: translateY(8px); opacity:0;
+    transition: opacity .8s ease, transform .8s ease;
+  }
+  .annotation.in { transform: translateY(0); opacity:1; }
+  .annotation::before {
+    content:""; position:absolute;
+    width:36px; height:1px; background:#B89968;
+  }
+  .annotation.left::before  { right:100%; top:50%; }
+  .annotation.right::before { left:100%; top:50%; }
+  .annotation .ann-label { font-size:10px; letter-spacing:.32em; text-transform:uppercase; color:#B89968; margin-bottom:.25rem; }
+  .annotation .ann-title { font-family:'Cormorant Garamond',serif; font-size:1.05rem; line-height:1.2; color:#1C1814; }
+
+  /* Pricing card */
+  .plan {
+    position:relative;
+    background:#fff;
+    border:1px solid #E6DFD2;
+    border-radius:18px;
+    padding:2rem 1.75rem;
+    transition: transform .5s cubic-bezier(.22,.61,.36,1), box-shadow .5s ease, border-color .5s ease;
+    display:flex; flex-direction:column;
+  }
+  .plan:hover { transform: translateY(-4px); box-shadow: 0 30px 60px -30px rgba(28,24,20,.25); }
+  .plan.featured {
+    background: linear-gradient(180deg, #1C1814 0%, #3F352B 100%);
+    color:#FAF7F2;
+    border: 1px solid #B89968;
+    box-shadow: 0 35px 70px -28px rgba(184,153,104,.35), 0 0 0 1px rgba(184,153,104,.6);
+  }
+  .plan.featured:hover { box-shadow: 0 45px 90px -28px rgba(184,153,104,.5), 0 0 0 1px #D4B98A; }
+  @media (min-width:1024px) {
+    .plan.featured { transform: scale(1.05); z-index:2; }
+    .plan.featured:hover { transform: scale(1.05) translateY(-4px); }
+  }
+  .plan .price-amount { font-family:'Cormorant Garamond',serif; font-weight:500; line-height:1; }
+  .plan-feat { display:flex; gap:.7rem; align-items:flex-start; padding:.45rem 0; font-size:13.5px; }
+  .plan-feat.no { opacity:.45; }
+  .plan-icon { flex-shrink:0; margin-top:2px; }
+
+  /* CTA button */
+  .btn-cta {
+    display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+    padding:.9rem 1.4rem; border-radius:10px;
+    font-size:11px; letter-spacing:.28em; text-transform:uppercase;
+    transition: all .35s ease; cursor:pointer; width:100%;
+  }
+  .btn-dark { background:#1C1814; color:#FAF7F2; }
+  .btn-dark:hover { background:#B89968; color:#1C1814; }
+  .btn-gold { background: linear-gradient(135deg,#B89968,#D4B98A); color:#1C1814; }
+  .btn-gold:hover { filter:brightness(1.05); }
+  .btn-ghost { background:transparent; border:1px solid rgba(28,24,20,.18); color:#3F352B; }
+  .btn-ghost:hover { background:#F1ECE3; }
+
+  /* Badge */
+  .recommended-badge {
+    position:absolute; top:-14px; left:50%; transform:translateX(-50%);
+    background: linear-gradient(135deg,#B89968,#D4B98A);
+    color:#1C1814;
+    font-size:10px; letter-spacing:.28em; text-transform:uppercase;
+    padding:.5rem 1.1rem; border-radius:999px; font-weight:600;
+    box-shadow: 0 8px 24px -8px rgba(184,153,104,.6);
+  }
+
+  /* Condition card */
+  .cond-card {
+    background:#fff; border:1px solid #EFE9DE; border-radius:16px;
+    padding:1.75rem; transition: transform .4s ease, box-shadow .4s ease;
+  }
+  .cond-card:hover { transform: translateY(-3px); box-shadow: 0 20px 45px -20px rgba(28,24,20,.18); }
+
+  /* Marquee */
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .marquee-track { animation: marquee 40s linear infinite; }
+
+  /* Soft fade for sections */
+  section { scroll-margin-top: 5rem; }
+</style>
+</head>
+
+<body class="overflow-x-hidden">
+
+<!-- ============== NAV ============== -->
+<header id="nav" class="fixed top-0 inset-x-0 z-40 transition-all duration-500">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 py-5 flex items-center justify-between">
+    <a href="#top" class="flex items-center gap-3">
+      <span class="font-display text-2xl tracking-[.25em] text-night">OKARA</span>
+      <span class="hidden md:inline text-[10px] tracking-ultra text-mocha">PROPUESTA 2026</span>
+    </a>
+    <nav class="hidden lg:flex items-center gap-8 text-[11px] tracking-[.22em] uppercase text-cocoa">
+      <a href="#mockups" class="hover:text-gold transition">Maqueta</a>
+      <a href="#planes"  class="hover:text-gold transition">Inversión</a>
+      <a href="#condiciones" class="hover:text-gold transition">Condiciones</a>
+      <a href="#cierre"  class="hover:text-gold transition">Siguiente paso</a>
+    </nav>
+    <a href="#planes" class="hidden md:inline-flex items-center gap-2 text-[11px] tracking-ultra uppercase px-5 py-3 border border-night/70 text-night hover:bg-night hover:text-ivory transition-all duration-500">
+      Ver Planes
+    </a>
+  </div>
+</header>
+
+<!-- ============== HERO ============== -->
+<section id="top" class="hero-bg relative min-h-[100svh] flex flex-col justify-center pt-32 pb-20">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 w-full">
+    <p class="reveal num-tag mb-8">— Documento exclusivo · Mayo 2026</p>
+    <h1 class="reveal font-display text-night text-5xl sm:text-6xl lg:text-8xl leading-[1.02] max-w-5xl">
+      Propuesta de<br/>
+      Transformación Digital:<br/>
+      <em class="italic text-gold">Okara.</em>
+    </h1>
+
+    <div class="reveal delay-1 mt-10 max-w-2xl">
+      <p class="text-cocoa/85 text-lg leading-relaxed font-light">
+        Estimado equipo Okara,
+      </p>
+      <p class="mt-5 text-cocoa/80 leading-relaxed">
+        Lo que verán a continuación no es una plantilla. Es una <strong class="text-night">herramienta única</strong>,
+        diseñada exclusivamente para reflejar el estatus de su clínica y construida pensando en cómo trabajan ustedes
+        cada día. Tres caminos posibles para llevar su presencia digital al nivel que merece.
+      </p>
+    </div>
+
+    <div class="reveal delay-2 mt-14 grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-4xl">
+      <div>
+        <p class="font-display text-4xl text-gold">100%</p>
+        <p class="num-tag mt-2">A medida</p>
+      </div>
+      <div>
+        <p class="font-display text-4xl text-gold">24/7</p>
+        <p class="num-tag mt-2">Captura de leads</p>
+      </div>
+      <div>
+        <p class="font-display text-4xl text-gold">.pe</p>
+        <p class="num-tag mt-2">SEO local</p>
+      </div>
+      <div>
+        <p class="font-display text-4xl text-gold">3</p>
+        <p class="num-tag mt-2">Caminos posibles</p>
+      </div>
+    </div>
+
+    <div class="reveal delay-3 mt-16 flex items-center gap-3 text-mocha">
+      <span class="w-12 h-px bg-mocha/40"></span>
+      <span class="num-tag">Desliza para descubrir</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============== TRUST MARQUEE ============== -->
+<section class="bg-night text-ivory/70 overflow-hidden">
+  <div class="py-5 whitespace-nowrap overflow-hidden">
+    <div class="marquee-track inline-flex gap-14 text-[11px] tracking-ultra uppercase">
+      <span>· Diseño Editorial</span><span>· Mobile-First</span><span>· SEO con dominio .pe</span>
+      <span>· Asesor IA Sofía</span><span>· Integración Meta</span><span>· Panel Autogestionable</span>
+      <span>· Diseño Editorial</span><span>· Mobile-First</span><span>· SEO con dominio .pe</span>
+      <span>· Asesor IA Sofía</span><span>· Integración Meta</span><span>· Panel Autogestionable</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============== INTRO / EL DIAGNÓSTICO ============== -->
+<section class="py-24 lg:py-32">
+  <div class="max-w-5xl mx-auto px-6 lg:px-10">
+    <p class="reveal num-tag mb-4">— 01 / Diagnóstico</p>
+    <h2 class="reveal font-display text-4xl sm:text-5xl lg:text-6xl text-night leading-[1.05]">
+      Hoy Okara es una de las mejores clínicas de Lima.<br/>
+      <span class="italic text-mocha">Su presencia digital aún no lo refleja.</span>
+    </h2>
+    <div class="reveal delay-1 mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div>
+        <p class="font-display text-5xl text-gold">80%</p>
+        <p class="text-cocoa/80 mt-3 text-sm leading-relaxed">de sus pacientes potenciales abren la web desde el celular. La web actual no es responsive.</p>
+      </div>
+      <div>
+        <p class="font-display text-5xl text-gold">0</p>
+        <p class="text-cocoa/80 mt-3 text-sm leading-relaxed">canales de captura activos fuera del horario de atención. Cero leads en la noche o fin de semana.</p>
+      </div>
+      <div>
+        <p class="font-display text-5xl text-gold">∞</p>
+        <p class="text-cocoa/80 mt-3 text-sm leading-relaxed">veces que el equipo depende de un programador para cualquier cambio en la web.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== MOCKUPS ============== -->
+<section id="mockups" class="bg-bone py-24 lg:py-36">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10">
+    <div class="text-center max-w-3xl mx-auto mb-20">
+      <p class="reveal num-tag mb-4">— 02 / Lo que ya construimos</p>
+      <h2 class="reveal font-display text-4xl sm:text-5xl lg:text-6xl text-night leading-[1.05]">
+        No es una promesa.<br/>
+        <span class="italic text-mocha">Es una maqueta que pueden navegar.</span>
+      </h2>
+      <p class="reveal delay-1 mt-6 text-cocoa/80 leading-relaxed">
+        Adelantamos el trabajo para que esta reunión no sea sobre conceptos abstractos.
+        Lo que ven aquí ya existe, ya funciona, y está listo para ajustarse a su visión.
+      </p>
+    </div>
+
+    <!-- MOCKUP 1: Landing Hero -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 mb-32 items-center">
+      <div class="reveal lg:col-span-7 relative">
+        <div class="mockup-frame">
+          <div class="mockup-chrome">
+            <span class="dot" style="background:#E27266;"></span>
+            <span class="dot" style="background:#E8B143;"></span>
+            <span class="dot" style="background:#5DA661;"></span>
+            <span class="url">okara.pe</span>
+          </div>
+          <div class="mockup-body">
+            <!-- Replace with real screenshot -->
+            <div class="mockup-placeholder">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              <p class="font-display text-lg text-cocoa">Hero · Landing Page</p>
+              <p class="text-[11px] tracking-ultra uppercase">Inserte captura aquí</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating annotations -->
+        <div class="annotation right hidden lg:block" style="top:18%; right:-260px;">
+          <p class="ann-label">A) Identidad</p>
+          <p class="ann-title">Lujo editorial silencioso, sin estridencia.</p>
+        </div>
+        <div class="annotation right hidden lg:block" style="top:62%; right:-260px;">
+          <p class="ann-label">B) Mobile-first</p>
+          <p class="ann-title">Carga limpia incluso en 4G de Miraflores.</p>
+        </div>
+      </div>
+
+      <div class="reveal delay-1 lg:col-span-5">
+        <p class="num-tag mb-3">— Vista 01</p>
+        <h3 class="font-display text-3xl lg:text-4xl text-night leading-tight">Landing Page Premium</h3>
+        <p class="mt-4 text-cocoa/80 leading-relaxed">
+          La primera impresión cuenta. Esta portada está diseñada para que un paciente nuevo
+          entienda en 3 segundos que está mirando una clínica de élite.
+        </p>
+        <ul class="mt-6 space-y-3 text-sm text-cocoa">
+          <li class="flex gap-3"><span class="text-gold mt-1">●</span>Tipografía editorial · Cormorant + Inter</li>
+          <li class="flex gap-3"><span class="text-gold mt-1">●</span>Animaciones suaves cubic-bezier premium</li>
+          <li class="flex gap-3"><span class="text-gold mt-1">●</span>Doble CTA hacia agenda y catálogo</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- MOCKUP 2: Admin Panel -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 mb-32 items-center">
+      <div class="reveal lg:col-span-5 lg:order-1 order-2">
+        <p class="num-tag mb-3">— Vista 02</p>
+        <h3 class="font-display text-3xl lg:text-4xl text-night leading-tight">Panel de Administración</h3>
+        <p class="mt-4 text-cocoa/80 leading-relaxed">
+          Ustedes mandan. Desde aquí deciden qué posts de Instagram y Facebook aparecen en
+          la web, publican artículos, y aprueban testimonios. Cero dependencia técnica.
+        </p>
+        <ul class="mt-6 space-y-3 text-sm text-cocoa">
+          <li class="flex gap-3"><span class="text-gold mt-1">●</span>Moderación de Meta con un solo clic</li>
+          <li class="flex gap-3"><span class="text-gold mt-1">●</span>Editor de blog tipo revista</li>
+          <li class="flex gap-3"><span class="text-gold mt-1">●</span>Aprobación de testimonios en cola</li>
+        </ul>
+      </div>
+      <div class="reveal delay-1 lg:col-span-7 lg:order-2 order-1 relative">
+        <div class="mockup-frame">
+          <div class="mockup-chrome">
+            <span class="dot" style="background:#E27266;"></span>
+            <span class="dot" style="background:#E8B143;"></span>
+            <span class="dot" style="background:#5DA661;"></span>
+            <span class="url">okara.pe/admin · Moderación Meta</span>
+          </div>
+          <div class="mockup-body">
+            <div class="mockup-placeholder">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+              <p class="font-display text-lg text-cocoa">Panel Admin · Moderación Meta</p>
+              <p class="text-[11px] tracking-ultra uppercase">Inserte captura aquí</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="annotation left hidden lg:block" style="top:22%; left:-260px;">
+          <p class="ann-label">A) Autonomía</p>
+          <p class="ann-title">Toggle "Mostrar/Ocultar" sobre cada post de Meta.</p>
+        </div>
+        <div class="annotation left hidden lg:block" style="top:65%; left:-260px;">
+          <p class="ann-label">B) Cero técnico</p>
+          <p class="ann-title">Pensado para un perfil de marketing, no de programación.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOCKUP 3: Catálogo + Chatbot side -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+      <div class="reveal relative">
+        <div class="mockup-frame">
+          <div class="mockup-chrome">
+            <span class="dot" style="background:#E27266;"></span>
+            <span class="dot" style="background:#E8B143;"></span>
+            <span class="dot" style="background:#5DA661;"></span>
+            <span class="url">okara.pe/#tratamientos</span>
+          </div>
+          <div class="mockup-body tall">
+            <div class="mockup-placeholder">
+              <p class="font-display text-lg text-cocoa">Catálogo + Filtros</p>
+              <p class="text-[11px] tracking-ultra uppercase">Inserte captura aquí</p>
+            </div>
+          </div>
+        </div>
+        <div class="mt-6">
+          <p class="num-tag mb-2">— Vista 03</p>
+          <h4 class="font-display text-2xl text-night">Catálogo con Filtros</h4>
+          <p class="mt-3 text-cocoa/80 text-sm leading-relaxed">9 tratamientos navegables por categoría. El paciente encuentra lo que busca en segundos.</p>
+        </div>
+      </div>
+
+      <div class="reveal delay-1 relative">
+        <div class="mockup-frame">
+          <div class="mockup-chrome">
+            <span class="dot" style="background:#E27266;"></span>
+            <span class="dot" style="background:#E8B143;"></span>
+            <span class="dot" style="background:#5DA661;"></span>
+            <span class="url">okara.pe · Sofía IA</span>
+          </div>
+          <div class="mockup-body tall">
+            <div class="mockup-placeholder">
+              <p class="font-display text-lg text-cocoa">Asesora Virtual · Sofía</p>
+              <p class="text-[11px] tracking-ultra uppercase">Inserte captura aquí</p>
+            </div>
+          </div>
+        </div>
+        <div class="mt-6">
+          <p class="num-tag mb-2">— Vista 04</p>
+          <h4 class="font-display text-2xl text-night">Asesor Estético Virtual</h4>
+          <p class="mt-3 text-cocoa/80 text-sm leading-relaxed">Perfila al paciente, recomienda tratamientos y captura el lead 24/7 con la voz de la marca.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============== PLANES ============== -->
+<section id="planes" class="py-24 lg:py-36 bg-paper">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10">
+    <div class="text-center max-w-3xl mx-auto mb-20">
+      <p class="reveal num-tag mb-4">— 03 / Tres caminos posibles</p>
+      <h2 class="reveal font-display text-4xl sm:text-5xl lg:text-6xl text-night leading-[1.05]">
+        Elija el ritmo en que <span class="italic text-mocha">Okara crece online.</span>
+      </h2>
+      <p class="reveal delay-1 mt-6 text-cocoa/80 leading-relaxed">
+        Tres propuestas, tres niveles de ambición. La segunda — destacada — es la que recomendamos
+        para esta primera etapa: la mejor relación entre inversión, impacto y autonomía.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-7 lg:gap-6 items-start">
+
+      <!-- ===== PLAN 1 ===== -->
+      <article class="plan reveal">
+        <p class="num-tag">— Opción 01</p>
+        <h3 class="font-display text-3xl text-night mt-3">Digitalización Básica</h3>
+        <p class="text-mocha text-sm mt-3 leading-relaxed">Una versión moderna pero mínima de la web actual. Lo justo para no quedarse atrás.</p>
+
+        <div class="mt-7 pb-6 border-b border-sand">
+          <p class="num-tag">Inversión</p>
+          <p class="price-amount text-5xl text-night mt-2">S/ 3,000</p>
+          <p class="text-mocha text-sm mt-1">Pago único · primera entrega</p>
+          <p class="mt-3 text-cocoa text-sm">+ <strong>S/ 200</strong> mensuales mantenimiento</p>
+        </div>
+
+        <div class="mt-6 flex-1">
+          <p class="num-tag mb-4">Incluye</p>
+          <div class="plan-feat"><span class="plan-icon text-cocoa">✓</span>Landing page responsive básica</div>
+          <div class="plan-feat"><span class="plan-icon text-cocoa">✓</span>Diseño visual modernizado</div>
+          <div class="plan-feat"><span class="plan-icon text-cocoa">✓</span>Catálogo de tratamientos estático</div>
+          <div class="plan-feat"><span class="plan-icon text-cocoa">✓</span>Formulario de contacto</div>
+          <div class="plan-feat no"><span class="plan-icon">—</span>Sin chatbot asesor</div>
+          <div class="plan-feat no"><span class="plan-icon">—</span>Sin integración Meta</div>
+          <div class="plan-feat no"><span class="plan-icon">—</span>Sin panel administrador</div>
+          <div class="plan-feat no"><span class="plan-icon">—</span>Sin módulo de blog</div>
+        </div>
+
+        <button class="btn-cta btn-ghost mt-8">Elegir esta opción</button>
+      </article>
+
+      <!-- ===== PLAN 2 (RECOMENDADO) ===== -->
+      <article class="plan featured reveal delay-1">
+        <span class="recommended-badge">★ Recomendado</span>
+
+        <p class="num-tag" style="color:#D4B98A;">— Opción 02</p>
+        <h3 class="font-display text-3xl mt-3">Ecosistema Digital Okara Premium</h3>
+        <p class="text-ivory/75 text-sm mt-3 leading-relaxed">La mejor relación valor-precio. Todo el ecosistema que vieron en la maqueta, listo para operar.</p>
+
+        <div class="mt-7 pb-6 border-b border-ivory/15">
+          <p class="num-tag" style="color:#D4B98A;">Inversión</p>
+          <p class="price-amount text-5xl mt-2" style="color:#D4B98A;">S/ 6,000</p>
+          <p class="text-ivory/70 text-sm mt-1">Pago único · primera entrega</p>
+          <p class="mt-3 text-ivory/90 text-sm">+ <strong>S/ 400</strong> mensuales mantenimiento</p>
+        </div>
+
+        <div class="mt-6 flex-1">
+          <p class="num-tag mb-4" style="color:#D4B98A;">Incluye</p>
+          <div class="plan-feat"><span class="plan-icon" style="color:#D4B98A;">✓</span>Landing page <strong>premium</strong> (la de la maqueta)</div>
+          <div class="plan-feat"><span class="plan-icon" style="color:#D4B98A;">✓</span><strong>Chatbot Asesor Estético</strong> con IA</div>
+          <div class="plan-feat"><span class="plan-icon" style="color:#D4B98A;">✓</span><strong>Integración Feed de Meta</strong> (IG + FB)</div>
+          <div class="plan-feat"><span class="plan-icon" style="color:#D4B98A;">✓</span><strong>Panel Admin Avanzado</strong> autogestionable</div>
+          <div class="plan-feat"><span class="plan-icon" style="color:#D4B98A;">✓</span>Módulo Blog editorial · SEO</div>
+          <div class="plan-feat"><span class="plan-icon" style="color:#D4B98A;">✓</span>Preparado para <strong>TikTok / Google / Meta Ads</strong></div>
+          <div class="plan-feat"><span class="plan-icon" style="color:#D4B98A;">✓</span>Traslado <strong>gratuito</strong> de dominio y hosting</div>
+          <div class="plan-feat"><span class="plan-icon" style="color:#D4B98A;">✓</span><strong>3 asesorías presenciales/mes</strong> de soporte</div>
+        </div>
+
+        <button class="btn-cta btn-gold mt-8">Elegir el plan recomendado</button>
+      </article>
+
+      <!-- ===== PLAN 3 ===== -->
+      <article class="plan reveal delay-2">
+        <p class="num-tag">— Opción 03</p>
+        <h3 class="font-display text-3xl text-night mt-3">Evolución Digital Absoluta</h3>
+        <p class="text-mocha text-sm mt-3 leading-relaxed">Toda la carne al asador. Para escalar a futuro con automatización avanzada y hoja de ruta continua.</p>
+
+        <div class="mt-7 pb-6 border-b border-sand">
+          <p class="num-tag">Inversión</p>
+          <p class="price-amount text-5xl text-night mt-2">S/ 8,000</p>
+          <p class="text-mocha text-sm mt-1">Pago único · primera entrega</p>
+          <p class="mt-3 text-cocoa text-sm">+ <strong>S/ 500</strong> mensuales mantenimiento</p>
+        </div>
+
+        <div class="mt-6 flex-1">
+          <p class="num-tag mb-4">Incluye todo lo del plan 02, más:</p>
+          <div class="plan-feat"><span class="plan-icon text-gold">✓</span><strong>Hoja de ruta de desarrollo continuo</strong> a 12 meses</div>
+          <div class="plan-feat"><span class="plan-icon text-gold">✓</span>Automatizaciones avanzadas (CRM, agenda, email)</div>
+          <div class="plan-feat"><span class="plan-icon text-gold">✓</span>A/B testing de campañas y landing variants</div>
+          <div class="plan-feat"><span class="plan-icon text-gold">✓</span>Dashboard de métricas unificado</div>
+          <div class="plan-feat"><span class="plan-icon text-gold">✓</span>Iteraciones trimestrales de UI/UX</div>
+          <div class="plan-feat"><span class="plan-icon text-gold">✓</span>Traslado de dominio y hosting incluido</div>
+          <div class="plan-feat"><span class="plan-icon text-gold">✓</span>Soporte prioritario · respuesta &lt;24h</div>
+        </div>
+
+        <button class="btn-cta btn-dark mt-8">Elegir esta opción</button>
+      </article>
+
+    </div>
+
+    <p class="reveal text-center mt-12 text-mocha text-sm">
+      Todos los planes son trabajados en exclusividad para Okara · ninguna plantilla, ningún proyecto compartido.
+    </p>
+  </div>
+</section>
+
+<!-- ============== CONDICIONES ============== -->
+<section id="condiciones" class="py-24 lg:py-36 bg-night text-ivory relative overflow-hidden">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 relative">
+    <div class="max-w-3xl mb-16">
+      <p class="reveal num-tag mb-4" style="color:#D4B98A;">— 04 / Condiciones comerciales</p>
+      <h2 class="reveal font-display text-4xl sm:text-5xl lg:text-6xl leading-[1.05]">
+        Transparencia desde<br/>
+        <span class="italic" style="color:#D4B98A;">el primer día.</span>
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-7">
+      <article class="reveal cond-card" style="background:#0F0D0B; border-color:#2A2520;">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center mb-5" style="background:linear-gradient(135deg,#B89968,#D4B98A);">
+          <span class="font-display text-night text-xl">01</span>
+        </div>
+        <h3 class="font-display text-2xl mb-3" style="color:#FAF7F2;">Forma de pago</h3>
+        <p class="text-ivory/75 text-sm leading-relaxed">
+          Para iniciar el proyecto se requiere un <strong style="color:#D4B98A;">abono inicial del 40%</strong> del costo total.
+          El 60% restante se cancela en hitos acordados durante el desarrollo.
+        </p>
+      </article>
+
+      <article class="reveal delay-1 cond-card" style="background:#0F0D0B; border-color:#2A2520;">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center mb-5" style="background:linear-gradient(135deg,#B89968,#D4B98A);">
+          <span class="font-display text-night text-xl">02</span>
+        </div>
+        <h3 class="font-display text-2xl mb-3" style="color:#FAF7F2;">Cronograma exclusivo</h3>
+        <p class="text-ivory/75 text-sm leading-relaxed">
+          Tras el abono inicial arrancamos un flujo de trabajo dedicado:
+          reuniones con su equipo, iteraciones de diseño y ajustes continuos
+          para garantizar que la herramienta final sea <strong style="color:#D4B98A;">100% única para Okara.</strong>
+        </p>
+      </article>
+
+      <article class="reveal delay-2 cond-card" style="background:#0F0D0B; border-color:#2A2520;">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center mb-5" style="background:linear-gradient(135deg,#B89968,#D4B98A);">
+          <span class="font-display text-night text-xl">03</span>
+        </div>
+        <h3 class="font-display text-2xl mb-3" style="color:#FAF7F2;">Servicios de terceros</h3>
+        <p class="text-ivory/75 text-sm leading-relaxed">
+          Los gastos asociados a IA y APIs de terceros generados <strong style="color:#D4B98A;">a partir del segundo mes</strong>
+          se debitarán de una cuenta operativa que Okara creará para tal fin.
+          El primer mes está incluido en el plan.
+        </p>
+      </article>
+    </div>
+
+    <!-- Pago seguro / extras -->
+    <div class="reveal mt-16 grid grid-cols-1 md:grid-cols-4 gap-6 pt-10 border-t border-ivory/10 text-[12px]">
+      <div class="flex items-center gap-3">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4B98A" stroke-width="1.4"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>
+        <div>
+          <p class="num-tag" style="color:#D4B98A;">Pagos</p>
+          <p class="text-ivory/80 mt-1">Transferencia · Plin · Yape</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4B98A" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 12l2 2 4-4"/></svg>
+        <div>
+          <p class="num-tag" style="color:#D4B98A;">Contrato</p>
+          <p class="text-ivory/80 mt-1">Documento formal incluido</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4B98A" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <div>
+          <p class="num-tag" style="color:#D4B98A;">Tiempos</p>
+          <p class="text-ivory/80 mt-1">Cronograma cerrado · sin sorpresas</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4B98A" stroke-width="1.4"><path d="M20 6L9 17l-5-5"/></svg>
+        <div>
+          <p class="num-tag" style="color:#D4B98A;">Garantía</p>
+          <p class="text-ivory/80 mt-1">30 días post-lanzamiento</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== CIERRE / SIGUIENTE PASO ============== -->
+<section id="cierre" class="py-24 lg:py-36 relative overflow-hidden">
+  <div class="max-w-4xl mx-auto px-6 lg:px-10 text-center relative">
+    <p class="reveal num-tag mb-4">— 05 / Siguiente paso</p>
+    <h2 class="reveal font-display text-4xl sm:text-5xl lg:text-7xl text-night leading-[1.05]">
+      Okara merece una plataforma<br/>
+      <span class="italic text-gold">a la altura de su clínica.</span>
+    </h2>
+    <p class="reveal delay-1 mt-8 text-cocoa/80 leading-relaxed max-w-2xl mx-auto">
+      Estamos listos para construirla. Solo falta confirmar el plan que más se ajuste a su visión
+      y agendar una reunión para definir cronograma, equipo asignado y fecha de lanzamiento.
+    </p>
+
+    <div class="reveal delay-2 mt-12 flex flex-wrap items-center justify-center gap-4">
+      <a href="https://wa.me/51999000000" class="btn-cta btn-dark px-10" style="width:auto;">
+        Conversar por WhatsApp
+      </a>
+      <a href="mailto:hola@okara.pe" class="btn-cta btn-ghost px-10" style="width:auto;">
+        Escribir un correo
+      </a>
+    </div>
+
+    <div class="reveal delay-3 hairline mt-20"></div>
+
+    <div class="reveal mt-10 flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 text-sm text-mocha">
+      <div class="flex items-center gap-3">
+        <span class="num-tag" style="color:#B89968;">Equipo a cargo</span>
+        <span class="text-cocoa">Estudio de diseño y desarrollo a medida</span>
+      </div>
+      <span class="hidden md:inline opacity-30">·</span>
+      <div class="flex items-center gap-3">
+        <span class="num-tag" style="color:#B89968;">Documento válido</span>
+        <span class="text-cocoa">30 días</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer class="bg-night text-ivory/60 border-t border-ivory/10">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
+    <div class="flex items-center gap-4">
+      <span class="font-display text-xl tracking-[.25em] text-ivory">OKARA</span>
+      <span class="text-[10px] tracking-ultra uppercase">Propuesta confidencial · Mayo 2026</span>
+    </div>
+    <div class="text-[10px] tracking-ultra uppercase opacity-70">
+      Documento exclusivo · no distribuir
+    </div>
+  </div>
+</footer>
+
+<!-- ============== SCRIPTS ============== -->
+<script>
+/* Nav scroll style */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 30) nav.classList.add('nav-scrolled');
+  else nav.classList.remove('nav-scrolled');
+});
+
+/* Reveal on scroll */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* Floating annotations: animate in after the mockup-frame they belong to is in view */
+const annIo = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const anns = e.target.parentElement.querySelectorAll('.annotation');
+      anns.forEach((a, idx) => setTimeout(() => a.classList.add('in'), 350 + idx * 250));
+      annIo.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.mockup-frame').forEach(el => annIo.observe(el));
+</script>
+</body>
+</html>
