@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Okara · Panel Administrador</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ivory:'#FAF7F2', bone:'#F1ECE3', sand:'#E6DFD2',
+          mocha:'#8E7C68', cocoa:'#3F352B', night:'#1C1814',
+          gold:'#B89968', golden:'#D4B98A',
+          ink:'#0F0D0B', paper:'#FBFAF7'
+        },
+        fontFamily: {
+          serif:['"Cormorant Garamond"','serif'],
+          sans:['Inter','system-ui','sans-serif']
+        },
+        letterSpacing: { 'ultra':'.28em' }
+      }
+    }
+  }
+</script>
+
+<style>
+  body { background:#FBFAF7; color:#1C1814; font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; }
+  .font-display { font-family:'Cormorant Garamond',serif; font-weight:500; }
+
+  /* Sidebar item */
+  .nav-item {
+    display:flex; align-items:center; gap:.75rem;
+    padding:.65rem .9rem; border-radius:10px;
+    color:#3F352B; font-size:13.5px;
+    transition:all .25s ease; cursor:pointer;
+    position:relative;
+  }
+  .nav-item:hover { background:#F1ECE3; color:#1C1814; }
+  .nav-item.active {
+    background:#1C1814; color:#FAF7F2;
+  }
+  .nav-item.active .nav-icon { color:#D4B98A; }
+  .nav-item .nav-icon { color:#8E7C68; transition: color .25s ease; }
+  .nav-item:hover .nav-icon { color:#1C1814; }
+  .nav-item .badge {
+    margin-left:auto;
+    font-size:10px; padding:2px 7px; border-radius:999px;
+    background:#B89968; color:#1C1814; font-weight:600;
+  }
+  .nav-item.active .badge { background:#D4B98A; }
+
+  .nav-section-label {
+    font-size:10px; letter-spacing:.28em; text-transform:uppercase;
+    color:#8E7C68; padding: 0 .9rem; margin-top:1.25rem; margin-bottom:.5rem;
+  }
+
+  /* Toggle switch */
+  .switch { position:relative; display:inline-block; width:42px; height:24px; }
+  .switch input { opacity:0; width:0; height:0; }
+  .slider {
+    position:absolute; inset:0; cursor:pointer;
+    background:#E6DFD2; border-radius:24px; transition:.35s;
+  }
+  .slider::before {
+    position:absolute; content:""; height:18px; width:18px; left:3px; top:3px;
+    background:#fff; border-radius:50%; transition:.35s;
+    box-shadow: 0 2px 6px rgba(28,24,20,.18);
+  }
+  input:checked + .slider { background: linear-gradient(135deg,#B89968,#D4B98A); }
+  input:checked + .slider::before { transform: translateX(18px); }
+
+  /* Card hover */
+  .post-card { transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease; }
+  .post-card:hover { transform: translateY(-2px); box-shadow: 0 12px 30px -16px rgba(28,24,20,.2); }
+  .post-card.hidden-state { opacity: .55; }
+  .post-card.hidden-state .post-img { filter: grayscale(60%); }
+
+  /* Status pill */
+  .pill { display:inline-flex; align-items:center; gap:.4rem; padding:.25rem .65rem; border-radius:999px; font-size:11px; font-weight:500; }
+  .pill-on  { background:#E8F2EA; color:#2F6B43; }
+  .pill-off { background:#F1ECE3; color:#8E7C68; }
+  .pill-warn{ background:#FBF3E0; color:#8C6A1F; }
+  .pill-ig  { background:linear-gradient(135deg, #FCE8F2, #F8DCD0); color:#A6396B; }
+  .pill-fb  { background:#E4ECF8; color:#1B4A8B; }
+
+  /* Buttons */
+  .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.6rem 1.1rem; border-radius:10px; font-size:13px; font-weight:500; transition:all .25s ease; cursor:pointer; }
+  .btn-primary { background:#1C1814; color:#FAF7F2; }
+  .btn-primary:hover { background:#3F352B; }
+  .btn-gold { background:linear-gradient(135deg, #B89968, #D4B98A); color:#1C1814; }
+  .btn-gold:hover { filter:brightness(1.05); }
+  .btn-ghost { background:transparent; color:#3F352B; border:1px solid #E6DFD2; }
+  .btn-ghost:hover { background:#F1ECE3; }
+  .btn-danger { background:transparent; color:#8E7C68; border:1px solid #E6DFD2; }
+  .btn-danger:hover { background:#FCEEEC; color:#A33B2A; border-color:#F0D2CC; }
+
+  /* Tab pill (filter) */
+  .filter-pill { padding:.4rem .9rem; border-radius:999px; font-size:12px; color:#3F352B; border:1px solid #E6DFD2; cursor:pointer; transition:all .25s ease; }
+  .filter-pill:hover { background:#F1ECE3; }
+  .filter-pill.active { background:#1C1814; color:#FAF7F2; border-color:#1C1814; }
+
+  /* Hide section util */
+  .view { display:none; }
+  .view.active { display:block; }
+
+  /* Inputs */
+  .input {
+    width:100%; background:#fff; border:1px solid #E6DFD2; border-radius:10px;
+    padding:.7rem .9rem; font-size:13.5px; color:#1C1814; outline:none;
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  .input:focus { border-color:#B89968; box-shadow: 0 0 0 4px rgba(184,153,104,.15); }
+  textarea.input { resize: vertical; min-height: 200px; line-height:1.65; }
+
+  /* Stat card */
+  .stat-card {
+    background:#fff; border:1px solid #EFE9DE; border-radius:14px; padding:1.25rem;
+    transition: transform .3s ease;
+  }
+  .stat-card:hover { transform: translateY(-2px); }
+
+  /* Scrollbar */
+  .scroll::-webkit-scrollbar { width: 8px; }
+  .scroll::-webkit-scrollbar-thumb { background: #E6DFD2; border-radius:8px; }
+
+  /* Mobile sidebar */
+  @media (max-width: 1024px) {
+    .sidebar { transform: translateX(-100%); transition: transform .35s ease; }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-overlay { display:none; }
+    .sidebar.open + .sidebar-overlay { display:block; }
+  }
+
+  /* Star rating */
+  .star { color: #B89968; }
+  .star-empty { color: #E6DFD2; }
+</style>
+</head>
+
+<body class="min-h-screen flex">
+
+<!-- ============ SIDEBAR ============ -->
+<aside id="sidebar" class="sidebar fixed lg:sticky top-0 left-0 z-40 h-screen w-[260px] bg-paper border-r border-sand flex flex-col">
+  <!-- Brand -->
+  <div class="px-6 py-6 border-b border-sand/70">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#B89968,#D4B98A);">
+        <span class="font-display text-night text-lg leading-none">O</span>
+      </div>
+      <div>
+        <p class="font-display text-night text-lg leading-tight tracking-[.15em]">OKARA</p>
+        <p class="text-[10px] tracking-ultra uppercase text-mocha">Panel admin</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nav -->
+  <nav class="flex-1 overflow-y-auto scroll px-3 py-4">
+    <p class="nav-section-label">General</p>
+    <button class="nav-item w-full" data-view="home">
+      <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg>
+      Inicio
+    </button>
+
+    <p class="nav-section-label">Contenido</p>
+    <button class="nav-item w-full" data-view="blog">
+      <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h12a4 4 0 014 4v12H8a4 4 0 01-4-4V4z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      Blog
+      <span class="badge">3</span>
+    </button>
+    <button class="nav-item w-full" data-view="testimonios">
+      <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 11.5a8.4 8.4 0 01-8.5 8.4 8.4 8.4 0 01-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 01-.9-3.8 8.4 8.4 0 018.4-8.4h.5a8.4 8.4 0 018 8z"/></svg>
+      Testimonios
+      <span class="badge">2</span>
+    </button>
+    <button class="nav-item w-full" data-view="tratamientos">
+      <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg>
+      Tratamientos
+    </button>
+
+    <p class="nav-section-label">Redes Sociales</p>
+    <button class="nav-item w-full active" data-view="meta">
+      <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+      Moderación Meta
+      <span class="badge">12</span>
+    </button>
+
+    <p class="nav-section-label">Sistema</p>
+    <button class="nav-item w-full" data-view="usuarios">
+      <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2M17 11h.01M21 14h.01M17 17h.01"/></svg>
+      Usuarios
+    </button>
+    <button class="nav-item w-full" data-view="config">
+      <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33h0a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51h0a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v0a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      Configuración
+    </button>
+  </nav>
+
+  <!-- User pill -->
+  <div class="p-3 border-t border-sand/70">
+    <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-bone transition cursor-pointer">
+      <div class="w-9 h-9 rounded-full flex items-center justify-center text-ivory font-medium text-sm" style="background:linear-gradient(135deg,#3F352B,#1C1814);">CM</div>
+      <div class="flex-1 min-w-0">
+        <p class="text-[13px] font-medium text-night truncate">Carla Mendoza</p>
+        <p class="text-[11px] text-mocha truncate">Marketing · Okara</p>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8E7C68" stroke-width="1.6"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+  </div>
+</aside>
+
+<div id="sidebarOverlay" class="sidebar-overlay fixed inset-0 z-30 bg-night/40 lg:hidden hidden" onclick="toggleSidebar(false)"></div>
+
+<!-- ============ MAIN ============ -->
+<main class="flex-1 min-w-0 flex flex-col">
+
+  <!-- Top bar -->
+  <header class="sticky top-0 z-20 bg-paper/85 backdrop-blur border-b border-sand">
+    <div class="flex items-center gap-3 px-5 lg:px-8 py-4">
+      <button class="lg:hidden text-cocoa" onclick="toggleSidebar(true)" aria-label="Menú">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
+      </button>
+      <div class="flex-1 min-w-0">
+        <p class="text-[10px] tracking-ultra uppercase text-mocha" id="crumb">Redes Sociales / Moderación Meta</p>
+        <h1 class="font-display text-2xl text-night leading-tight" id="pageTitle">Moderación de Meta</h1>
+      </div>
+
+      <div class="hidden md:flex items-center gap-2 bg-white border border-sand rounded-full px-4 py-2 w-80">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8E7C68" stroke-width="1.6"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4-4"/></svg>
+        <input class="bg-transparent outline-none text-sm flex-1 placeholder:text-mocha" placeholder="Buscar…"/>
+        <kbd class="text-[10px] text-mocha border border-sand rounded px-1.5 py-0.5">⌘K</kbd>
+      </div>
+
+      <button class="relative w-10 h-10 rounded-full hover:bg-bone transition flex items-center justify-center" aria-label="Notificaciones">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3F352B" stroke-width="1.6"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9M9 17a3 3 0 006 0"/></svg>
+        <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-gold"></span>
+      </button>
+
+      <a href="okara-landing.html" class="btn btn-ghost hidden sm:inline-flex">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 3h6v6M10 14L21 3M21 14v7H3V3h7"/></svg>
+        Ver web pública
+      </a>
+    </div>
+  </header>
+
+  <!-- =========== VIEW: META MODERATION (default active) =========== -->
+  <section class="view active" data-view="meta">
+    <div class="px-5 lg:px-8 py-6 lg:py-8 max-w-[1400px]">
+
+      <!-- Top intro -->
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-6">
+        <div>
+          <p class="text-sm text-cocoa max-w-xl leading-relaxed">
+            Decide qué publicaciones de tu Instagram y Facebook se muestran en la web pública.
+            Cada post se sincroniza automáticamente cada hora.
+          </p>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2 text-[12px] text-mocha">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            Sincronizado hace 14 min
+          </div>
+          <button class="btn btn-ghost">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.5 9a9 9 0 0114.85-3.36L23 10M1 14l4.65 4.36A9 9 0 0020.5 15"/></svg>
+            Sincronizar
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-7">
+        <div class="stat-card">
+          <p class="text-[11px] tracking-ultra uppercase text-mocha">Total importados</p>
+          <p class="font-display text-3xl text-night mt-2">128</p>
+          <p class="text-[11px] text-mocha mt-1">Últimos 30 días</p>
+        </div>
+        <div class="stat-card">
+          <p class="text-[11px] tracking-ultra uppercase text-mocha">Visibles en web</p>
+          <p class="font-display text-3xl mt-2" style="color:#2F6B43;">8</p>
+          <p class="text-[11px] text-mocha mt-1">Recomendado: 6–9</p>
+        </div>
+        <div class="stat-card">
+          <p class="text-[11px] tracking-ultra uppercase text-mocha">Ocultos</p>
+          <p class="font-display text-3xl text-cocoa mt-2">120</p>
+          <p class="text-[11px] text-mocha mt-1">Disponibles para activar</p>
+        </div>
+        <div class="stat-card">
+          <p class="text-[11px] tracking-ultra uppercase text-mocha">Click-through</p>
+          <p class="font-display text-3xl text-night mt-2">4.2%</p>
+          <p class="text-[11px] mt-1" style="color:#2F6B43;">▲ +0.6% esta semana</p>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="flex flex-wrap items-center justify-between gap-4 mb-5">
+        <div class="flex flex-wrap items-center gap-2">
+          <button class="filter-pill active">Todos <span class="opacity-60">128</span></button>
+          <button class="filter-pill">Instagram <span class="opacity-60">86</span></button>
+          <button class="filter-pill">Facebook <span class="opacity-60">42</span></button>
+          <button class="filter-pill">Reels <span class="opacity-60">24</span></button>
+          <button class="filter-pill">Patrocinados <span class="opacity-60">9</span></button>
+        </div>
+        <div class="flex items-center gap-2 text-[12px] text-mocha">
+          <span>Ordenar por:</span>
+          <select class="bg-white border border-sand rounded-md px-2 py-1.5 text-cocoa">
+            <option>Más recientes</option>
+            <option>Mayor engagement</option>
+            <option>Visibles primero</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Posts grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+
+        <!-- Card 1 - visible -->
+        <article class="post-card bg-white rounded-2xl border border-sand overflow-hidden">
+          <div class="relative aspect-[4/3] overflow-hidden bg-bone">
+            <img class="post-img w-full h-full object-cover" src="https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&w=800&q=80" alt=""/>
+            <span class="absolute top-3 left-3 pill pill-ig">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg>
+              Instagram
+            </span>
+            <span class="absolute top-3 right-3 pill pill-warn">Patrocinado</span>
+          </div>
+          <div class="p-4">
+            <p class="text-[13px] text-night leading-relaxed line-clamp-2">
+              Ritual Facial Couture con 30% OFF hasta fin de mes. Una hora y media de pura redefinición ✨
+            </p>
+            <div class="flex items-center gap-4 mt-3 text-[12px] text-mocha">
+              <span class="flex items-center gap-1">♥ 1,247</span>
+              <span class="flex items-center gap-1">💬 38</span>
+              <span class="flex items-center gap-1">📤 21</span>
+              <span class="ml-auto">Hace 2h</span>
+            </div>
+          </div>
+          <div class="px-4 py-3 border-t border-sand bg-bone/30 flex items-center justify-between">
+            <span class="pill pill-on">● Visible en web</span>
+            <label class="switch"><input type="checkbox" checked onchange="togglePost(this)"><span class="slider"></span></label>
+          </div>
+        </article>
+
+        <!-- Card 2 - visible -->
+        <article class="post-card bg-white rounded-2xl border border-sand overflow-hidden">
+          <div class="relative aspect-[4/3] overflow-hidden bg-bone">
+            <img class="post-img w-full h-full object-cover" src="https://images.unsplash.com/photo-1591343395082-e120087004b4?auto=format&fit=crop&w=800&q=80" alt=""/>
+            <span class="absolute top-3 left-3 pill pill-fb">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>
+              Facebook
+            </span>
+          </div>
+          <div class="p-4">
+            <p class="text-[13px] text-night leading-relaxed line-clamp-2">
+              Nuevo en Okara: Esculpido Corporal HIFU. Remodela sin cirugía y sin pausas en tu vida 🤍
+            </p>
+            <div class="flex items-center gap-4 mt-3 text-[12px] text-mocha">
+              <span>♥ 892</span><span>💬 43</span><span>📤 18</span>
+              <span class="ml-auto">Hace 1d</span>
+            </div>
+          </div>
+          <div class="px-4 py-3 border-t border-sand bg-bone/30 flex items-center justify-between">
+            <span class="pill pill-on">● Visible en web</span>
+            <label class="switch"><input type="checkbox" checked onchange="togglePost(this)"><span class="slider"></span></label>
+          </div>
+        </article>
+
+        <!-- Card 3 - reel visible -->
+        <article class="post-card bg-white rounded-2xl border border-sand overflow-hidden">
+          <div class="relative aspect-[4/3] overflow-hidden bg-bone">
+            <img class="post-img w-full h-full object-cover" src="https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=800&q=80" alt=""/>
+            <span class="absolute top-3 left-3 pill pill-ig">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/></svg>
+              Reel · IG
+            </span>
+            <span class="absolute bottom-3 right-3 bg-night/70 text-ivory text-[10px] px-2 py-1 rounded">3.2K views</span>
+          </div>
+          <div class="p-4">
+            <p class="text-[13px] text-night leading-relaxed line-clamp-2">
+              El secreto de un rostro descansado en menos de 30 minutos 🤍 #antiage
+            </p>
+            <div class="flex items-center gap-4 mt-3 text-[12px] text-mocha">
+              <span>♥ 654</span><span>💬 22</span><span>📤 47</span>
+              <span class="ml-auto">Hace 2d</span>
+            </div>
+          </div>
+          <div class="px-4 py-3 border-t border-sand bg-bone/30 flex items-center justify-between">
+            <span class="pill pill-on">● Visible en web</span>
+            <label class="switch"><input type="checkbox" checked onchange="togglePost(this)"><span class="slider"></span></label>
+          </div>
+        </article>
+
+        <!-- Card 4 - hidden -->
+        <article class="post-card hidden-state bg-white rounded-2xl border border-sand overflow-hidden">
+          <div class="relative aspect-[4/3] overflow-hidden bg-bone">
+            <img class="post-img w-full h-full object-cover" src="https://images.unsplash.com/photo-1620331311520-246422fd82f9?auto=format&fit=crop&w=800&q=80" alt=""/>
+            <span class="absolute top-3 left-3 pill pill-ig">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg>
+              Instagram
+            </span>
+          </div>
+          <div class="p-4">
+            <p class="text-[13px] text-night leading-relaxed line-clamp-2">
+              Día interno con el equipo médico. Capacitación en nuevos protocolos antiage.
+            </p>
+            <div class="flex items-center gap-4 mt-3 text-[12px] text-mocha">
+              <span>♥ 312</span><span>💬 8</span><span>📤 4</span>
+              <span class="ml-auto">Hace 4d</span>
+            </div>
+          </div>
+          <div class="px-4 py-3 border-t border-sand bg-bone/30 flex items-center justify-between">
+            <span class="pill pill-off">○ Oculto</span>
+            <label class="switch"><input type="checkbox" onchange="togglePost(this)"><span class="slider"></span></label>
+          </div>
+        </article>
+
+        <!-- Card 5 - hidden -->
+        <article class="post-card hidden-state bg-white rounded-2xl border border-sand overflow-hidden">
+          <div class="relative aspect-[4/3] overflow-hidden bg-bone">
+            <img class="post-img w-full h-full object-cover" src="https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=800&q=80" alt=""/>
+            <span class="absolute top-3 left-3 pill pill-ig">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg>
+              Instagram
+            </span>
+          </div>
+          <div class="p-4">
+            <p class="text-[13px] text-night leading-relaxed line-clamp-2">
+              Story repost de paciente · mejor no mostrar en web (privacidad).
+            </p>
+            <div class="flex items-center gap-4 mt-3 text-[12px] text-mocha">
+              <span>♥ 89</span><span>💬 12</span><span>📤 2</span>
+              <span class="ml-auto">Hace 5d</span>
+            </div>
+          </div>
+          <div class="px-4 py-3 border-t border-sand bg-bone/30 flex items-center justify-between">
+            <span class="pill pill-off">○ Oculto</span>
+            <label class="switch"><input type="checkbox" onchange="togglePost(this)"><span class="slider"></span></label>
+          </div>
+        </article>
+
+        <!-- Card 6 - visible -->
+        <article class="post-card bg-white rounded-2xl border border-sand overflow-hidden">
+          <div class="relative aspect-[4/3] overflow-hidden bg-bone">
+            <img class="post-img w-full h-full object-cover" src="https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=800&q=80" alt=""/>
+            <span class="absolute top-3 left-3 pill pill-fb">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>
+              Facebook
+            </span>
+            <span class="absolute top-3 right-3 pill pill-warn">Evento</span>
+          </div>
+          <div class="p-4">
+            <p class="text-[13px] text-night leading-relaxed line-clamp-2">
+              Open House Okara · Viernes 7 de junio, 7pm. Solo invitadas 🤍
+            </p>
+            <div class="flex items-center gap-4 mt-3 text-[12px] text-mocha">
+              <span>♥ 543</span><span>💬 67</span><span>📤 31</span>
+              <span class="ml-auto">Hace 5d</span>
+            </div>
+          </div>
+          <div class="px-4 py-3 border-t border-sand bg-bone/30 flex items-center justify-between">
+            <span class="pill pill-on">● Visible en web</span>
+            <label class="switch"><input type="checkbox" checked onchange="togglePost(this)"><span class="slider"></span></label>
+          </div>
+        </article>
+
+      </div>
+
+      <div class="mt-8 flex items-center justify-center gap-2 text-sm">
+        <button class="filter-pill">Cargar más publicaciones</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========== VIEW: HOME =========== -->
+  <section class="view" data-view="home">
+    <div class="px-5 lg:px-8 py-6 lg:py-8 max-w-[1400px]">
+      <div class="flex items-center justify-between mb-6">
+        <p class="text-sm text-cocoa">Bienvenida de vuelta, Carla 🤍 Resumen de los últimos 7 días.</p>
+        <button class="btn btn-gold">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
+          Nuevo artículo
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-7">
+        <div class="stat-card">
+          <p class="text-[11px] tracking-ultra uppercase text-mocha">Visitas web</p>
+          <p class="font-display text-3xl text-night mt-2">8,432</p>
+          <p class="text-[11px] mt-1" style="color:#2F6B43;">▲ 12% vs semana anterior</p>
+        </div>
+        <div class="stat-card">
+          <p class="text-[11px] tracking-ultra uppercase text-mocha">Leads del chatbot</p>
+          <p class="font-display text-3xl text-night mt-2">47</p>
+          <p class="text-[11px] mt-1" style="color:#2F6B43;">▲ 8 nuevas hoy</p>
+        </div>
+        <div class="stat-card">
+          <p class="text-[11px] tracking-ultra uppercase text-mocha">Posts Meta visibles</p>
+          <p class="font-display text-3xl text-night mt-2">8 / 128</p>
+          <p class="text-[11px] text-mocha mt-1">Curaduría manual</p>
+        </div>
+        <div class="stat-card">
+          <p class="text-[11px] tracking-ultra uppercase text-mocha">Artículos publicados</p>
+          <p class="font-display text-3xl text-night mt-2">14</p>
+          <p class="text-[11px] text-mocha mt-1">3 en borrador</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div class="lg:col-span-2 bg-white rounded-2xl border border-sand p-6">
+          <div class="flex items-center justify-between mb-4">
+            <p class="font-display text-xl text-night">Conversaciones del chatbot</p>
+            <button class="text-[11px] tracking-ultra uppercase text-mocha hover:text-gold">Ver todas</button>
+          </div>
+          <ul class="divide-y divide-sand">
+            <li class="py-3 flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-bone flex items-center justify-center text-cocoa text-sm">MR</div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm text-night truncate">María R. preguntó por <strong>Esculpido HIFU</strong></p>
+                <p class="text-[12px] text-mocha">Hace 14 min · Lead capturado</p>
+              </div>
+              <span class="pill pill-on">Nuevo</span>
+            </li>
+            <li class="py-3 flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-bone flex items-center justify-center text-cocoa text-sm">LF</div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm text-night truncate">Lucía F. consultó por <strong>Antiage Médico</strong></p>
+                <p class="text-[12px] text-mocha">Hace 1h · Agendó valoración</p>
+              </div>
+              <span class="pill pill-on">Convertido</span>
+            </li>
+            <li class="py-3 flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-bone flex items-center justify-center text-cocoa text-sm">AS</div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm text-night truncate">Ana S. preguntó por <strong>Glow Express</strong></p>
+                <p class="text-[12px] text-mocha">Hace 3h</p>
+              </div>
+              <span class="pill pill-off">Sin contacto</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-sand p-6">
+          <p class="font-display text-xl text-night mb-4">Tareas pendientes</p>
+          <ul class="space-y-3 text-sm text-cocoa">
+            <li class="flex items-start gap-2"><span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-gold"></span>Aprobar 2 testimonios pendientes</li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-gold"></span>Revisar 12 posts Meta sin moderar</li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-gold"></span>Publicar borrador "Bioestimuladores"</li>
+            <li class="flex items-start gap-2"><span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-gold"></span>Actualizar imagen hero (verano)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========== VIEW: BLOG =========== -->
+  <section class="view" data-view="blog">
+    <div class="px-5 lg:px-8 py-6 lg:py-8 max-w-[1400px]">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+        <p class="text-sm text-cocoa max-w-xl">Crea y edita los artículos del Diario Okara. Los textos publicados aparecen automáticamente en la sección Blog de la web.</p>
+        <button class="btn btn-gold" onclick="document.getElementById('composer').scrollIntoView({behavior:'smooth'})">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
+          Nuevo artículo
+        </button>
+      </div>
+
+      <div class="flex flex-wrap gap-2 mb-5">
+        <button class="filter-pill active">Todos <span class="opacity-60">14</span></button>
+        <button class="filter-pill">Publicados <span class="opacity-60">11</span></button>
+        <button class="filter-pill">Borradores <span class="opacity-60">3</span></button>
+        <button class="filter-pill">Programados <span class="opacity-60">0</span></button>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-sand overflow-hidden mb-8">
+        <table class="w-full text-sm">
+          <thead class="bg-bone/50 text-[11px] tracking-ultra uppercase text-mocha">
+            <tr>
+              <th class="text-left px-5 py-3">Artículo</th>
+              <th class="text-left px-5 py-3 hidden md:table-cell">Categoría</th>
+              <th class="text-left px-5 py-3 hidden lg:table-cell">Autor</th>
+              <th class="text-left px-5 py-3">Estado</th>
+              <th class="text-left px-5 py-3 hidden md:table-cell">Fecha</th>
+              <th class="px-5 py-3"></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-sand">
+            <tr class="hover:bg-bone/30">
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-lg overflow-hidden bg-bone flex-shrink-0">
+                    <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&w=200&q=80" alt=""/>
+                  </div>
+                  <div class="min-w-0">
+                    <p class="font-medium text-night truncate">5 beneficios del ácido hialurónico que no conocías</p>
+                    <p class="text-[11px] text-mocha">5 min de lectura</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-5 py-4 hidden md:table-cell text-cocoa">Antiage</td>
+              <td class="px-5 py-4 hidden lg:table-cell text-cocoa">Dra. P. Loayza</td>
+              <td class="px-5 py-4"><span class="pill pill-on">Publicado</span></td>
+              <td class="px-5 py-4 hidden md:table-cell text-mocha">18 May 2026</td>
+              <td class="px-5 py-4 text-right">
+                <button class="text-mocha hover:text-night"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 4H4v16h16v-7M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              </td>
+            </tr>
+            <tr class="hover:bg-bone/30">
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-lg overflow-hidden bg-bone flex-shrink-0">
+                    <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1620331311520-246422fd82f9?auto=format&fit=crop&w=200&q=80" alt=""/>
+                  </div>
+                  <div class="min-w-0">
+                    <p class="font-medium text-night truncate">Cómo cuidar tu piel del sol en verano limeño</p>
+                    <p class="text-[11px] text-mocha">7 min de lectura</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-5 py-4 hidden md:table-cell text-cocoa">Dermatología</td>
+              <td class="px-5 py-4 hidden lg:table-cell text-cocoa">Dra. Salinas</td>
+              <td class="px-5 py-4"><span class="pill pill-on">Publicado</span></td>
+              <td class="px-5 py-4 hidden md:table-cell text-mocha">11 May 2026</td>
+              <td class="px-5 py-4 text-right">
+                <button class="text-mocha hover:text-night"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 4H4v16h16v-7M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              </td>
+            </tr>
+            <tr class="hover:bg-bone/30">
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-lg overflow-hidden bg-bone flex-shrink-0">
+                    <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=200&q=80" alt=""/>
+                  </div>
+                  <div class="min-w-0">
+                    <p class="font-medium text-night truncate">Bioestimuladores: la nueva era del antiage natural</p>
+                    <p class="text-[11px] text-mocha">9 min de lectura</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-5 py-4 hidden md:table-cell text-cocoa">Antiage</td>
+              <td class="px-5 py-4 hidden lg:table-cell text-cocoa">Dr. Quintana</td>
+              <td class="px-5 py-4"><span class="pill pill-warn">Borrador</span></td>
+              <td class="px-5 py-4 hidden md:table-cell text-mocha">Hoy</td>
+              <td class="px-5 py-4 text-right">
+                <button class="text-mocha hover:text-night"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 4H4v16h16v-7M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              </td>
+            </tr>
+            <tr class="hover:bg-bone/30">
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-lg overflow-hidden bg-bone flex-shrink-0">
+                    <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1591343395082-e120087004b4?auto=format&fit=crop&w=200&q=80" alt=""/>
+                  </div>
+                  <div class="min-w-0">
+                    <p class="font-medium text-night truncate">HIFU vs Radiofrecuencia: ¿qué necesita tu piel?</p>
+                    <p class="text-[11px] text-mocha">6 min de lectura</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-5 py-4 hidden md:table-cell text-cocoa">Corporal</td>
+              <td class="px-5 py-4 hidden lg:table-cell text-cocoa">Dra. P. Loayza</td>
+              <td class="px-5 py-4"><span class="pill pill-on">Publicado</span></td>
+              <td class="px-5 py-4 hidden md:table-cell text-mocha">02 May 2026</td>
+              <td class="px-5 py-4 text-right">
+                <button class="text-mocha hover:text-night"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 4H4v16h16v-7M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Composer -->
+      <div id="composer" class="bg-white rounded-2xl border border-sand p-6 lg:p-8">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <p class="text-[11px] tracking-ultra uppercase text-mocha">Nuevo artículo</p>
+            <h3 class="font-display text-2xl text-night">Redactar para el Diario Okara</h3>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="btn btn-ghost">Guardar borrador</button>
+            <button class="btn btn-primary">Publicar</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2 space-y-4">
+            <div>
+              <label class="text-[11px] tracking-ultra uppercase text-mocha block mb-2">Título</label>
+              <input class="input" placeholder="Ej: Bioestimuladores: la nueva era del antiage natural" value="Bioestimuladores: la nueva era del antiage natural"/>
+            </div>
+            <div>
+              <label class="text-[11px] tracking-ultra uppercase text-mocha block mb-2">Bajada / Extracto</label>
+              <input class="input" placeholder="Una línea que enganche al lector…"/>
+            </div>
+            <div>
+              <label class="text-[11px] tracking-ultra uppercase text-mocha block mb-2">Contenido</label>
+              <div class="border border-sand rounded-t-lg bg-bone/30 px-3 py-2 flex items-center gap-1 text-cocoa text-sm">
+                <button class="px-2 py-1 hover:bg-white rounded font-bold">B</button>
+                <button class="px-2 py-1 hover:bg-white rounded italic">I</button>
+                <button class="px-2 py-1 hover:bg-white rounded underline">U</button>
+                <span class="w-px h-4 bg-sand mx-1"></span>
+                <button class="px-2 py-1 hover:bg-white rounded">H1</button>
+                <button class="px-2 py-1 hover:bg-white rounded">H2</button>
+                <button class="px-2 py-1 hover:bg-white rounded">"</button>
+                <span class="w-px h-4 bg-sand mx-1"></span>
+                <button class="px-2 py-1 hover:bg-white rounded">• Lista</button>
+                <button class="px-2 py-1 hover:bg-white rounded">🔗</button>
+                <button class="px-2 py-1 hover:bg-white rounded">🖼️</button>
+              </div>
+              <textarea class="input rounded-t-none border-t-0" placeholder="Empieza a escribir el artículo…">Durante años, el antiage estuvo dominado por el "más es más". Hoy, los bioestimuladores marcan un cambio de paradigma: en lugar de rellenar, despiertan al colágeno para que la propia piel se regenere…</textarea>
+            </div>
+          </div>
+
+          <div class="space-y-5">
+            <div>
+              <label class="text-[11px] tracking-ultra uppercase text-mocha block mb-2">Imagen de portada</label>
+              <div class="aspect-[4/3] rounded-lg border-2 border-dashed border-sand bg-bone/40 flex flex-col items-center justify-center text-mocha hover:bg-bone/80 cursor-pointer transition">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                <p class="text-[12px] mt-2">Subir imagen</p>
+                <p class="text-[10px]">JPG / PNG · máx 5MB</p>
+              </div>
+            </div>
+            <div>
+              <label class="text-[11px] tracking-ultra uppercase text-mocha block mb-2">Categoría</label>
+              <select class="input">
+                <option>Antiage</option>
+                <option>Dermatología</option>
+                <option>Corporal</option>
+                <option>Wellness</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[11px] tracking-ultra uppercase text-mocha block mb-2">Autor</label>
+              <select class="input">
+                <option>Dr. Quintana</option>
+                <option>Dra. P. Loayza</option>
+                <option>Dra. Salinas</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[11px] tracking-ultra uppercase text-mocha block mb-2">Tags</label>
+              <input class="input" placeholder="antiage, colágeno, bioestimuladores"/>
+            </div>
+            <div class="flex items-center justify-between bg-bone/40 rounded-lg p-3">
+              <div>
+                <p class="text-[13px] font-medium text-night">Artículo destacado</p>
+                <p class="text-[11px] text-mocha">Aparece como featured en la home del blog</p>
+              </div>
+              <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========== VIEW: TESTIMONIOS =========== -->
+  <section class="view" data-view="testimonios">
+    <div class="px-5 lg:px-8 py-6 lg:py-8 max-w-[1400px]">
+      <p class="text-sm text-cocoa max-w-xl mb-6">Aprueba o rechaza las reseñas que llegan desde la web, el chatbot o el equipo de cabina. Solo las aprobadas se muestran en la landing.</p>
+
+      <div class="flex flex-wrap gap-2 mb-5">
+        <button class="filter-pill active">Pendientes <span class="opacity-60">2</span></button>
+        <button class="filter-pill">Aprobados <span class="opacity-60">28</span></button>
+        <button class="filter-pill">Rechazados <span class="opacity-60">3</span></button>
+        <button class="filter-pill">Todos <span class="opacity-60">33</span></button>
+      </div>
+
+      <!-- Pending queue -->
+      <p class="text-[11px] tracking-ultra uppercase text-mocha mb-3">Esperan tu aprobación</p>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-10">
+        <article class="bg-white rounded-2xl border border-sand p-6">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-bone flex items-center justify-center text-cocoa font-medium">VC</div>
+              <div>
+                <p class="text-sm font-medium text-night">Valeria Cárdenas</p>
+                <p class="text-[11px] text-mocha">Ritual Facial Couture · Vía Instagram</p>
+              </div>
+            </div>
+            <span class="pill pill-warn">Pendiente</span>
+          </div>
+          <div class="flex gap-0.5 mb-3">★★★★★</div>
+          <p class="text-cocoa text-sm leading-relaxed italic">"La piel me quedó como nueva, pero sobre todo la experiencia: el lugar, la atención, todo se siente cuidado al detalle."</p>
+          <div class="flex items-center gap-2 mt-5 pt-5 border-t border-sand">
+            <button class="btn btn-gold flex-1 justify-center">Aprobar y publicar</button>
+            <button class="btn btn-ghost">Editar</button>
+            <button class="btn btn-danger">Rechazar</button>
+          </div>
+        </article>
+
+        <article class="bg-white rounded-2xl border border-sand p-6">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-bone flex items-center justify-center text-cocoa font-medium">DM</div>
+              <div>
+                <p class="text-sm font-medium text-night">Daniela Mosquera</p>
+                <p class="text-[11px] text-mocha">Esculpido HIFU · Vía formulario web</p>
+              </div>
+            </div>
+            <span class="pill pill-warn">Pendiente</span>
+          </div>
+          <div class="flex gap-0.5 mb-3">★★★★★</div>
+          <p class="text-cocoa text-sm leading-relaxed italic">"Tenía miedo de que se notara 'hecho'. Tres meses después solo me dicen que me veo descansada. Eso era exactamente lo que buscaba."</p>
+          <div class="flex items-center gap-2 mt-5 pt-5 border-t border-sand">
+            <button class="btn btn-gold flex-1 justify-center">Aprobar y publicar</button>
+            <button class="btn btn-ghost">Editar</button>
+            <button class="btn btn-danger">Rechazar</button>
+          </div>
+        </article>
+      </div>
+
+      <!-- Approved list -->
+      <p class="text-[11px] tracking-ultra uppercase text-mocha mb-3">Publicados en la web</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <article class="bg-white rounded-2xl border border-sand p-5">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-sm font-medium text-night">Carolina P.</p>
+            <span class="pill pill-on">Visible</span>
+          </div>
+          <p class="text-[11px] text-mocha mb-2">Antiage Médico Premium</p>
+          <div class="flex gap-0.5 mb-2">★★★★★</div>
+          <p class="text-cocoa text-[13px] leading-relaxed line-clamp-3 italic">"Buscaba un lugar donde no me sintiera 'una más'. En Okara me hicieron sentir vista. Resultados sutiles, exactos."</p>
+          <div class="flex items-center justify-between mt-4 pt-4 border-t border-sand text-[12px]">
+            <span class="text-mocha">12 May 2026</span>
+            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+          </div>
+        </article>
+        <article class="bg-white rounded-2xl border border-sand p-5">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-sm font-medium text-night">Mariana V.</p>
+            <span class="pill pill-on">Visible</span>
+          </div>
+          <p class="text-[11px] text-mocha mb-2">Láser Rejuvenecedor</p>
+          <div class="flex gap-0.5 mb-2">★★★★★</div>
+          <p class="text-cocoa text-[13px] leading-relaxed line-clamp-3 italic">"Las manchas que cargaba desde el embarazo se fueron desvaneciendo sin invasividad. La diferencia es real."</p>
+          <div class="flex items-center justify-between mt-4 pt-4 border-t border-sand text-[12px]">
+            <span class="text-mocha">28 Abr 2026</span>
+            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+          </div>
+        </article>
+        <article class="bg-white rounded-2xl border border-sand p-5">
+          <div class="flex items-center justify-between mb-2">
+            <p class="text-sm font-medium text-night">Lucía F.</p>
+            <span class="pill pill-on">Visible</span>
+          </div>
+          <p class="text-[11px] text-mocha mb-2">Wellness Holístico</p>
+          <div class="flex gap-0.5 mb-2">★★★★<span class="star-empty">★</span></div>
+          <p class="text-cocoa text-[13px] leading-relaxed line-clamp-3 italic">"Salgo de cada sesión con la sensación de que algo se acomodó por dentro. Lujo silencioso."</p>
+          <div class="flex items-center justify-between mt-4 pt-4 border-t border-sand text-[12px]">
+            <span class="text-mocha">15 Abr 2026</span>
+            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========== VIEW: TRATAMIENTOS =========== -->
+  <section class="view" data-view="tratamientos">
+    <div class="px-5 lg:px-8 py-6 lg:py-8 max-w-[1400px]">
+      <p class="text-sm text-cocoa mb-6">Gestiona el catálogo público de tratamientos. Los cambios se reflejan inmediatamente en la web.</p>
+      <div class="bg-white border border-sand rounded-2xl p-10 text-center text-mocha">
+        <svg class="mx-auto mb-3" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+        <p class="font-display text-night text-xl">Módulo de Tratamientos</p>
+        <p class="text-sm mt-2">CRUD de servicios · próxima iteración</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========== VIEW: USUARIOS / CONFIG (placeholders) =========== -->
+  <section class="view" data-view="usuarios">
+    <div class="px-5 lg:px-8 py-6 lg:py-8 max-w-[1400px]">
+      <div class="bg-white border border-sand rounded-2xl p-10 text-center text-mocha">
+        <p class="font-display text-night text-xl">Gestión de Usuarios</p>
+        <p class="text-sm mt-2">Roles, permisos y accesos al panel · próxima iteración</p>
+      </div>
+    </div>
+  </section>
+  <section class="view" data-view="config">
+    <div class="px-5 lg:px-8 py-6 lg:py-8 max-w-[1400px]">
+      <div class="bg-white border border-sand rounded-2xl p-10 text-center text-mocha">
+        <p class="font-display text-night text-xl">Configuración general</p>
+        <p class="text-sm mt-2">Marca, integraciones, dominio y SEO · próxima iteración</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* Sidebar nav switching */
+const navItems = document.querySelectorAll('.nav-item');
+const views = document.querySelectorAll('.view');
+const pageTitle = document.getElementById('pageTitle');
+const crumb = document.getElementById('crumb');
+
+const meta = {
+  home:         { title:'Inicio', crumb:'General / Inicio' },
+  blog:         { title:'Gestor de Blog', crumb:'Contenido / Blog' },
+  testimonios:  { title:'Gestor de Testimonios', crumb:'Contenido / Testimonios' },
+  tratamientos: { title:'Tratamientos', crumb:'Contenido / Tratamientos' },
+  meta:         { title:'Moderación de Meta', crumb:'Redes Sociales / Moderación Meta' },
+  usuarios:     { title:'Usuarios', crumb:'Sistema / Usuarios' },
+  config:       { title:'Configuración', crumb:'Sistema / Configuración' }
+};
+
+navItems.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const view = btn.dataset.view;
+    navItems.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    views.forEach(v => v.classList.toggle('active', v.dataset.view === view));
+    if (meta[view]) {
+      pageTitle.textContent = meta[view].title;
+      crumb.textContent = meta[view].crumb;
+    }
+    if (window.innerWidth < 1024) toggleSidebar(false);
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+
+/* Mobile sidebar */
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebarOverlay');
+function toggleSidebar(open) {
+  sidebar.classList.toggle('open', open);
+  overlay.classList.toggle('hidden', !open);
+}
+
+/* Toggle post visibility (state visual update) */
+function togglePost(checkbox) {
+  const card = checkbox.closest('.post-card');
+  const pill = card.querySelector('.pill');
+  if (checkbox.checked) {
+    card.classList.remove('hidden-state');
+    pill.className = 'pill pill-on';
+    pill.textContent = '● Visible en web';
+  } else {
+    card.classList.add('hidden-state');
+    pill.className = 'pill pill-off';
+    pill.textContent = '○ Oculto';
+  }
+}
+</script>
+</body>
+</html>

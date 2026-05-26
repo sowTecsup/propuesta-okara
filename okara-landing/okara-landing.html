@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Okara · Clínica Estética de Autor</title>
+<meta name="description" content="Okara — Clínica estética de alta gama. Tratamientos faciales, corporales y antiage diseñados con precisión médica y estética de autor." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ivory:  '#FAF7F2',
+          bone:   '#F1ECE3',
+          sand:   '#E6DFD2',
+          mocha:  '#8E7C68',
+          cocoa:  '#3F352B',
+          night:  '#1C1814',
+          gold:   '#B89968',
+          golden: '#D4B98A'
+        },
+        fontFamily: {
+          serif: ['"Cormorant Garamond"', 'serif'],
+          sans:  ['Inter', 'system-ui', 'sans-serif']
+        },
+        letterSpacing: {
+          'ultra': '.35em'
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  html { scroll-behavior: smooth; }
+  body {
+    background: #FAF7F2;
+    color: #1C1814;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .font-display { font-family: 'Cormorant Garamond', serif; font-weight: 400; }
+
+  /* Hairline divider */
+  .hairline { height: 1px; background: linear-gradient(to right, transparent, rgba(28,24,20,.25), transparent); }
+
+  /* Reveal animation */
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 1.1s cubic-bezier(.22,.61,.36,1), transform 1.1s cubic-bezier(.22,.61,.36,1); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* Hero ken-burns */
+  @keyframes kenburns {
+    0%   { transform: scale(1.05); }
+    100% { transform: scale(1.18); }
+  }
+  .kenburns { animation: kenburns 18s ease-out forwards; }
+
+  /* Soft gradient overlay */
+  .hero-veil {
+    background:
+      linear-gradient(180deg, rgba(28,24,20,.35) 0%, rgba(28,24,20,.15) 35%, rgba(28,24,20,.65) 100%);
+  }
+
+  /* Marquee */
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .marquee-track { animation: marquee 38s linear infinite; }
+
+  /* Buttons */
+  .btn-primary {
+    background: #1C1814;
+    color: #FAF7F2;
+    transition: all .35s ease;
+    letter-spacing: .22em;
+  }
+  .btn-primary:hover { background: #B89968; color: #1C1814; }
+
+  .btn-ghost {
+    border: 1px solid rgba(250,247,242,.55);
+    color: #FAF7F2;
+    letter-spacing: .22em;
+    transition: all .35s ease;
+  }
+  .btn-ghost:hover { background: #FAF7F2; color: #1C1814; border-color: #FAF7F2; }
+
+  /* Treatment card hover */
+  .treatment-card .t-img { transition: transform 1.4s cubic-bezier(.22,.61,.36,1); }
+  .treatment-card:hover .t-img { transform: scale(1.08); }
+  .treatment-card .t-line { transition: width .6s ease; width: 0; }
+  .treatment-card:hover .t-line { width: 100%; }
+
+  /* Meta cards */
+  .meta-card { transition: transform .5s ease, box-shadow .5s ease; }
+  .meta-card:hover { transform: translateY(-6px); box-shadow: 0 30px 60px -30px rgba(28,24,20,.35); }
+
+  /* Carousel */
+  .carousel-track {
+    display: flex;
+    gap: 1.5rem;
+    transition: transform .8s cubic-bezier(.22,.61,.36,1);
+  }
+  .carousel-item { flex: 0 0 calc(33.333% - 1rem); }
+  @media (max-width: 900px) { .carousel-item { flex: 0 0 calc(50% - .75rem); } }
+  @media (max-width: 640px) { .carousel-item { flex: 0 0 100%; } }
+
+  /* Chat widget */
+  .chat-fab {
+    box-shadow: 0 18px 40px -10px rgba(184,153,104,.55), 0 4px 14px rgba(28,24,20,.35);
+    transition: transform .35s ease, box-shadow .35s ease;
+  }
+  .chat-fab:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 22px 50px -10px rgba(184,153,104,.7); }
+
+  .chat-panel {
+    transform: translateY(20px) scale(.98);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform .45s cubic-bezier(.22,.61,.36,1), opacity .35s ease;
+    box-shadow:
+      0 35px 70px -20px rgba(28,24,20,.5),
+      0 0 0 1px rgba(184,153,104,.25);
+  }
+  .chat-panel.open {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .msg-bubble { max-width: 82%; line-height: 1.55; }
+  .msg-bot   { background: #F1ECE3; color: #1C1814; border-radius: 18px 18px 18px 4px; }
+  .msg-user  { background: #1C1814; color: #FAF7F2; border-radius: 18px 18px 4px 18px; }
+
+  .typing-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #8E7C68;
+    margin: 0 2px;
+    animation: blink 1.2s infinite both;
+  }
+  .typing-dot:nth-child(2) { animation-delay: .2s; }
+  .typing-dot:nth-child(3) { animation-delay: .4s; }
+  @keyframes blink { 0%,80%,100% { opacity:.25; } 40% { opacity: 1; } }
+
+  /* Quick chips */
+  .chip {
+    border: 1px solid rgba(28,24,20,.18);
+    color: #3F352B;
+    transition: all .3s ease;
+  }
+  .chip:hover { background: #1C1814; color: #FAF7F2; border-color: #1C1814; }
+
+  /* Scrollbar (chat) */
+  .chat-scroll::-webkit-scrollbar { width: 6px; }
+  .chat-scroll::-webkit-scrollbar-thumb { background: #E6DFD2; border-radius: 4px; }
+
+  /* Pulse ring */
+  @keyframes pulseRing {
+    0%   { transform: scale(.85); opacity: .7; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+  .pulse-ring {
+    position: absolute; inset: 0; border-radius: 9999px;
+    background: rgba(184,153,104,.45);
+    animation: pulseRing 2.2s ease-out infinite;
+  }
+
+  /* Number underline */
+  .num-tag { letter-spacing: .35em; font-size: 11px; color: #8E7C68; }
+
+  /* Nav blur on scroll */
+  .nav-scrolled {
+    background: rgba(250,247,242,.85);
+    backdrop-filter: saturate(140%) blur(14px);
+    border-bottom: 1px solid rgba(28,24,20,.06);
+  }
+
+  /* Catálogo: filtros */
+  .cat-filter {
+    padding: .55rem 1.1rem;
+    font-size: 11px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    border: 1px solid rgba(28,24,20,.18);
+    color: #3F352B;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all .35s ease;
+    background: transparent;
+  }
+  .cat-filter:hover { background:#F1ECE3; }
+  .cat-filter.active { background:#1C1814; color:#FAF7F2; border-color:#1C1814; }
+  .treatment-card.hide-by-filter { display:none; }
+
+  /* Testimonios */
+  .testi-card { transition: transform .5s ease, box-shadow .5s ease; }
+  .testi-card:hover { transform: translateY(-4px); box-shadow: 0 30px 60px -30px rgba(28,24,20,.25); }
+  .quote-mark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 6rem;
+    line-height: .6;
+    color: #B89968;
+    opacity: .35;
+  }
+
+  /* Blog editorial */
+  .editorial-card { transition: transform .6s ease; }
+  .editorial-card:hover .ed-img { transform: scale(1.05); }
+  .ed-img { transition: transform 1.2s cubic-bezier(.22,.61,.36,1); }
+  .ed-cat {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: #B89968;
+  }
+</style>
+</head>
+
+<body class="overflow-x-hidden">
+
+<!-- ============== NAV ============== -->
+<header id="nav" class="fixed top-0 inset-x-0 z-40 transition-all duration-500">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 py-5 flex items-center justify-between">
+    <a href="#top" class="flex items-center gap-3">
+      <span class="font-display text-2xl tracking-[.25em] text-night">OKARA</span>
+      <span class="hidden md:inline text-[10px] tracking-ultra text-mocha">CLÍNICA ESTÉTICA</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-8 text-[12px] tracking-[.22em] uppercase text-cocoa">
+      <a href="#tratamientos" class="hover:text-gold transition">Tratamientos</a>
+      <a href="#testimonios"  class="hover:text-gold transition">Testimonios</a>
+      <a href="#promos"        class="hover:text-gold transition">Novedades</a>
+      <a href="#blog"          class="hover:text-gold transition">Diario</a>
+      <a href="#contacto"      class="hover:text-gold transition">Contacto</a>
+    </nav>
+    <a href="#contacto" class="hidden md:inline-flex items-center gap-2 text-[11px] tracking-ultra uppercase px-5 py-3 border border-night/70 text-night hover:bg-night hover:text-ivory transition-all duration-500">
+      Reservar Cita
+    </a>
+    <button id="navBurger" class="md:hidden text-night" aria-label="Menú">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+        <path d="M3 7h18M3 12h18M3 17h18"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- ============== HERO ============== -->
+<section id="top" class="relative min-h-[100svh] w-full overflow-hidden">
+  <div class="absolute inset-0">
+    <img
+      src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=2000&q=80"
+      alt="Spa estética de lujo"
+      class="w-full h-full object-cover kenburns"
+    />
+    <div class="absolute inset-0 hero-veil"></div>
+  </div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 pt-40 pb-24 min-h-[100svh] flex flex-col justify-end">
+    <div class="reveal max-w-3xl">
+      <p class="text-[11px] tracking-ultra uppercase text-golden mb-6">— Estética de Autor · Lima, Perú</p>
+      <h1 class="font-display text-ivory text-5xl sm:text-6xl lg:text-8xl leading-[1.02]">
+        Belleza que <em class="italic text-golden">respira</em><br/>
+        ciencia y silencio.
+      </h1>
+      <p class="mt-8 max-w-xl text-ivory/85 text-lg font-light leading-relaxed">
+        Tratamientos médico-estéticos diseñados con precisión clínica y mirada de autor.
+        Cada protocolo, una conversación íntima entre tu piel y nuestro equipo.
+      </p>
+
+      <div class="mt-10 flex flex-wrap items-center gap-4">
+        <a href="#contacto" class="btn-primary uppercase text-[11px] px-8 py-4">
+          Agendar Valoración
+        </a>
+        <a href="#tratamientos" class="btn-ghost uppercase text-[11px] px-8 py-4">
+          Conocer Tratamientos
+        </a>
+      </div>
+    </div>
+
+    <!-- Scroll cue -->
+    <div class="reveal mt-20 flex items-center justify-between text-ivory/70">
+      <div class="flex items-center gap-3 text-[10px] tracking-ultra uppercase">
+        <span class="w-10 h-px bg-ivory/40"></span>
+        Desliza para descubrir
+      </div>
+      <div class="hidden md:flex items-center gap-8 text-[10px] tracking-ultra uppercase">
+        <span>Miraflores · Lima</span>
+        <span>+51 999 000 000</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== TRUST MARQUEE ============== -->
+<section class="bg-night text-ivory/70 overflow-hidden">
+  <div class="py-6 whitespace-nowrap overflow-hidden">
+    <div class="marquee-track inline-flex gap-16 text-[11px] tracking-ultra uppercase">
+      <!-- repeat twice for infinite loop -->
+      <span>· Medicina Estética</span>
+      <span>· Dermatología Avanzada</span>
+      <span>· Tecnología Suiza</span>
+      <span>· Protocolos de Autor</span>
+      <span>· Resultados Naturales</span>
+      <span>· Certificación Internacional</span>
+      <span>· Medicina Estética</span>
+      <span>· Dermatología Avanzada</span>
+      <span>· Tecnología Suiza</span>
+      <span>· Protocolos de Autor</span>
+      <span>· Resultados Naturales</span>
+      <span>· Certificación Internacional</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============== CATÁLOGO DE TRATAMIENTOS ============== -->
+<section id="tratamientos" class="relative py-28 lg:py-36">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10">
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-10 mb-12">
+      <div class="reveal max-w-2xl">
+        <p class="num-tag uppercase mb-4">— 01 / Catálogo</p>
+        <h2 class="font-display text-4xl sm:text-5xl lg:text-6xl leading-[1.05] text-night">
+          Protocolos íntimos,<br/>
+          <span class="italic text-mocha">resultados visibles.</span>
+        </h2>
+      </div>
+      <p class="reveal max-w-md text-cocoa/80 leading-relaxed">
+        Una selección curada de tratamientos faciales, corporales, antiage, capilares y wellness.
+        Cada gesto, pensado para realzar la belleza que ya habita en ti.
+      </p>
+    </div>
+
+    <!-- Filtros del catálogo -->
+    <div id="catFilters" class="reveal flex flex-wrap items-center gap-3 mb-12">
+      <button class="cat-filter active" data-cat="all">Todos</button>
+      <button class="cat-filter" data-cat="facial">Facial</button>
+      <button class="cat-filter" data-cat="antiage">Antiage</button>
+      <button class="cat-filter" data-cat="corporal">Corporal</button>
+      <button class="cat-filter" data-cat="capilar">Capilar</button>
+      <button class="cat-filter" data-cat="wellness">Wellness</button>
+    </div>
+
+    <div id="catGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <article class="treatment-card reveal group" data-cat="facial">
+        <div class="relative overflow-hidden mb-5 aspect-[4/5] bg-sand">
+          <img class="t-img w-full h-full object-cover" src="https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&w=900&q=80" alt="Facial de lujo"/>
+          <span class="absolute top-4 left-4 bg-ivory/90 text-night text-[10px] tracking-ultra uppercase px-3 py-1.5">Facial</span>
+        </div>
+        <p class="num-tag mb-2">— 001 · 90 min</p>
+        <h3 class="font-display text-2xl text-night">Ritual Facial Couture</h3>
+        <p class="mt-2 text-cocoa/75 text-sm leading-relaxed">
+          Hidratación profunda, microdermoabrasión y radiofrecuencia en una experiencia diseñada a medida de tu piel.
+        </p>
+        <div class="t-line h-px bg-gold mt-5"></div>
+      </article>
+
+      <article class="treatment-card reveal group" data-cat="antiage">
+        <div class="relative overflow-hidden mb-5 aspect-[4/5] bg-sand">
+          <img class="t-img w-full h-full object-cover" src="https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=900&q=80" alt="Antiage"/>
+          <span class="absolute top-4 left-4 bg-ivory/90 text-night text-[10px] tracking-ultra uppercase px-3 py-1.5">Antiage</span>
+        </div>
+        <p class="num-tag mb-2">— 002 · Médico</p>
+        <h3 class="font-display text-2xl text-night">Antiage Médico Premium</h3>
+        <p class="mt-2 text-cocoa/75 text-sm leading-relaxed">
+          Toxina botulínica, bioestimuladores y plasma rico en plaquetas. Naturalidad por encima de la tendencia.
+        </p>
+        <div class="t-line h-px bg-gold mt-5"></div>
+      </article>
+
+      <article class="treatment-card reveal group" data-cat="corporal">
+        <div class="relative overflow-hidden mb-5 aspect-[4/5] bg-sand">
+          <img class="t-img w-full h-full object-cover" src="https://images.unsplash.com/photo-1591343395082-e120087004b4?auto=format&fit=crop&w=900&q=80" alt="Corporal"/>
+          <span class="absolute top-4 left-4 bg-ivory/90 text-night text-[10px] tracking-ultra uppercase px-3 py-1.5">Corporal</span>
+        </div>
+        <p class="num-tag mb-2">— 003 · 3 a 6 sesiones</p>
+        <h3 class="font-display text-2xl text-night">Esculpido Corporal HIFU</h3>
+        <p class="mt-2 text-cocoa/75 text-sm leading-relaxed">
+          Ultrasonido focalizado de alta intensidad para remodelación sin cirugía ni tiempos de recuperación.
+        </p>
+        <div class="t-line h-px bg-gold mt-5"></div>
+      </article>
+
+      <article class="treatment-card reveal group" data-cat="facial">
+        <div class="relative overflow-hidden mb-5 aspect-[4/5] bg-sand">
+          <img class="t-img w-full h-full object-cover" src="https://images.unsplash.com/photo-1620331311520-246422fd82f9?auto=format&fit=crop&w=900&q=80" alt="Láser"/>
+          <span class="absolute top-4 left-4 bg-ivory/90 text-night text-[10px] tracking-ultra uppercase px-3 py-1.5">Facial</span>
+        </div>
+        <p class="num-tag mb-2">— 004 · 45 min</p>
+        <h3 class="font-display text-2xl text-night">Láser Rejuvenecedor</h3>
+        <p class="mt-2 text-cocoa/75 text-sm leading-relaxed">
+          Fototermólisis fraccionada que devuelve uniformidad, luz y elasticidad. Resultados desde la primera sesión.
+        </p>
+        <div class="t-line h-px bg-gold mt-5"></div>
+      </article>
+
+      <article class="treatment-card reveal group" data-cat="capilar">
+        <div class="relative overflow-hidden mb-5 aspect-[4/5] bg-sand">
+          <img class="t-img w-full h-full object-cover" src="https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=900&q=80" alt="Capilar"/>
+          <span class="absolute top-4 left-4 bg-ivory/90 text-night text-[10px] tracking-ultra uppercase px-3 py-1.5">Capilar</span>
+        </div>
+        <p class="num-tag mb-2">— 005 · 8 semanas</p>
+        <h3 class="font-display text-2xl text-night">Tricoestética Capilar</h3>
+        <p class="mt-2 text-cocoa/75 text-sm leading-relaxed">
+          Diagnóstico tricológico y mesoterapia capilar para devolver densidad, brillo y vitalidad al cabello.
+        </p>
+        <div class="t-line h-px bg-gold mt-5"></div>
+      </article>
+
+      <article class="treatment-card reveal group" data-cat="wellness">
+        <div class="relative overflow-hidden mb-5 aspect-[4/5] bg-sand">
+          <img class="t-img w-full h-full object-cover" src="https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=900&q=80" alt="Wellness"/>
+          <span class="absolute top-4 left-4 bg-ivory/90 text-night text-[10px] tracking-ultra uppercase px-3 py-1.5">Wellness</span>
+        </div>
+        <p class="num-tag mb-2">— 006 · Holístico</p>
+        <h3 class="font-display text-2xl text-night">Wellness Holístico</h3>
+        <p class="mt-2 text-cocoa/75 text-sm leading-relaxed">
+          Sueroterapia, drenaje linfático y protocolos detox. La belleza también se cultiva desde adentro.
+        </p>
+        <div class="t-line h-px bg-gold mt-5"></div>
+      </article>
+
+      <article class="treatment-card reveal group" data-cat="facial">
+        <div class="relative overflow-hidden mb-5 aspect-[4/5] bg-sand">
+          <img class="t-img w-full h-full object-cover" src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=900&q=80" alt="Glow Express"/>
+          <span class="absolute top-4 left-4 bg-ivory/90 text-night text-[10px] tracking-ultra uppercase px-3 py-1.5">Facial</span>
+        </div>
+        <p class="num-tag mb-2">— 007 · 45 min</p>
+        <h3 class="font-display text-2xl text-night">Glow Express Pre-evento</h3>
+        <p class="mt-2 text-cocoa/75 text-sm leading-relaxed">
+          Hidratación intensa, oxigenoterapia y toque de luz instantánea. Listo para salir, sin enrojecimiento.
+        </p>
+        <div class="t-line h-px bg-gold mt-5"></div>
+      </article>
+
+      <article class="treatment-card reveal group" data-cat="corporal">
+        <div class="relative overflow-hidden mb-5 aspect-[4/5] bg-sand">
+          <img class="t-img w-full h-full object-cover" src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=900&q=80" alt="Drenaje"/>
+          <span class="absolute top-4 left-4 bg-ivory/90 text-night text-[10px] tracking-ultra uppercase px-3 py-1.5">Corporal</span>
+        </div>
+        <p class="num-tag mb-2">— 008 · 60 min</p>
+        <h3 class="font-display text-2xl text-night">Drenaje Linfático Manual</h3>
+        <p class="mt-2 text-cocoa/75 text-sm leading-relaxed">
+          Técnica de Vodder para descongestionar, desinflamar y devolver ligereza al cuerpo entero.
+        </p>
+        <div class="t-line h-px bg-gold mt-5"></div>
+      </article>
+
+      <article class="treatment-card reveal group" data-cat="antiage">
+        <div class="relative overflow-hidden mb-5 aspect-[4/5] bg-sand">
+          <img class="t-img w-full h-full object-cover" src="https://images.unsplash.com/photo-1573461160327-b450ce3d8e7f?auto=format&fit=crop&w=900&q=80" alt="Peeling"/>
+          <span class="absolute top-4 left-4 bg-ivory/90 text-night text-[10px] tracking-ultra uppercase px-3 py-1.5">Antiage</span>
+        </div>
+        <p class="num-tag mb-2">— 009 · Protocolo</p>
+        <h3 class="font-display text-2xl text-night">Peeling Médico</h3>
+        <p class="mt-2 text-cocoa/75 text-sm leading-relaxed">
+          Renovación celular profunda para corregir manchas, textura y cicatrices con seguimiento dermatológico.
+        </p>
+        <div class="t-line h-px bg-gold mt-5"></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FILOSOFÍA / SPLIT ============== -->
+<section id="filosofia" class="relative bg-bone py-28 lg:py-36">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+    <div class="reveal relative aspect-[4/5] overflow-hidden">
+      <img src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=format&fit=crop&w=1200&q=80"
+           alt="Filosofía Okara" class="w-full h-full object-cover"/>
+      <div class="absolute -bottom-6 -right-6 bg-night text-ivory p-8 max-w-xs hidden md:block">
+        <p class="font-display text-3xl leading-tight">"La elegancia es lo que queda cuando todo lo demás ha sido depurado."</p>
+        <p class="mt-4 text-[10px] tracking-ultra uppercase text-golden">— Filosofía Okara</p>
+      </div>
+    </div>
+    <div class="reveal">
+      <p class="num-tag uppercase mb-4">— 02 / Filosofía</p>
+      <h2 class="font-display text-4xl sm:text-5xl text-night leading-tight">
+        No transformamos rostros.<br/>
+        <span class="italic text-mocha">Los devolvemos a sí mismos.</span>
+      </h2>
+      <p class="mt-8 text-cocoa/80 leading-relaxed">
+        Okara nace de la convicción de que la belleza más poderosa es la que parece intacta.
+        Nuestro equipo médico —dermatólogos, cirujanos plásticos y cosmiatras certificados—
+        trabaja bajo un mismo principio: precisión sin huella, sofisticación sin exceso.
+      </p>
+      <div class="mt-10 grid grid-cols-2 gap-8 max-w-md">
+        <div>
+          <p class="font-display text-5xl text-gold">12+</p>
+          <p class="text-[11px] tracking-ultra uppercase text-mocha mt-2">Años de experiencia</p>
+        </div>
+        <div>
+          <p class="font-display text-5xl text-gold">8K</p>
+          <p class="text-[11px] tracking-ultra uppercase text-mocha mt-2">Pacientes acompañados</p>
+        </div>
+        <div>
+          <p class="font-display text-5xl text-gold">25</p>
+          <p class="text-[11px] tracking-ultra uppercase text-mocha mt-2">Protocolos exclusivos</p>
+        </div>
+        <div>
+          <p class="font-display text-5xl text-gold">5★</p>
+          <p class="text-[11px] tracking-ultra uppercase text-mocha mt-2">Satisfacción global</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== TESTIMONIOS ============== -->
+<section id="testimonios" class="relative py-28 lg:py-36 bg-ivory">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10">
+    <div class="reveal text-center max-w-3xl mx-auto mb-20">
+      <p class="num-tag uppercase mb-4">— 03 / Confianza</p>
+      <h2 class="font-display text-4xl sm:text-5xl lg:text-6xl leading-[1.05] text-night">
+        Voces que <span class="italic text-mocha">han pasado por aquí.</span>
+      </h2>
+      <p class="mt-6 text-cocoa/75 leading-relaxed">
+        Más de 8,000 pacientes han confiado su belleza al equipo Okara.
+        Estas son algunas de sus historias.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+
+      <article class="testi-card reveal bg-white p-8 lg:p-10 border border-sand relative overflow-hidden">
+        <span class="quote-mark absolute -top-2 left-6">"</span>
+        <div class="relative">
+          <div class="flex gap-0.5 text-gold text-lg mb-5">★★★★★</div>
+          <p class="font-display text-2xl text-night leading-snug">
+            Buscaba un lugar donde no me sintiera <em>"una más"</em>. En Okara me hicieron sentir vista.
+            Resultados sutiles, exactos.
+          </p>
+          <div class="mt-8 pt-6 border-t border-sand flex items-center gap-3">
+            <div class="w-11 h-11 rounded-full bg-bone flex items-center justify-center text-cocoa font-medium">CP</div>
+            <div>
+              <p class="text-sm font-medium text-night">Carolina P.</p>
+              <p class="text-[11px] tracking-ultra uppercase text-mocha mt-0.5">Antiage Médico · 38 años</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="testi-card reveal bg-white p-8 lg:p-10 border border-sand relative overflow-hidden">
+        <span class="quote-mark absolute -top-2 left-6">"</span>
+        <div class="relative">
+          <div class="flex gap-0.5 text-gold text-lg mb-5">★★★★★</div>
+          <p class="font-display text-2xl text-night leading-snug">
+            Tenía miedo de que se notara "hecho". Tres meses después solo me dicen que me veo descansada.
+            Eso era exactamente lo que buscaba.
+          </p>
+          <div class="mt-8 pt-6 border-t border-sand flex items-center gap-3">
+            <div class="w-11 h-11 rounded-full bg-bone flex items-center justify-center text-cocoa font-medium">DM</div>
+            <div>
+              <p class="text-sm font-medium text-night">Daniela M.</p>
+              <p class="text-[11px] tracking-ultra uppercase text-mocha mt-0.5">Esculpido HIFU · 42 años</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="testi-card reveal bg-white p-8 lg:p-10 border border-sand relative overflow-hidden">
+        <span class="quote-mark absolute -top-2 left-6">"</span>
+        <div class="relative">
+          <div class="flex gap-0.5 text-gold text-lg mb-5">★★★★★</div>
+          <p class="font-display text-2xl text-night leading-snug">
+            La piel me quedó como nueva, pero sobre todo la experiencia:
+            el lugar, la atención, todo se siente cuidado al detalle.
+          </p>
+          <div class="mt-8 pt-6 border-t border-sand flex items-center gap-3">
+            <div class="w-11 h-11 rounded-full bg-bone flex items-center justify-center text-cocoa font-medium">VC</div>
+            <div>
+              <p class="text-sm font-medium text-night">Valeria C.</p>
+              <p class="text-[11px] tracking-ultra uppercase text-mocha mt-0.5">Ritual Facial Couture · 31 años</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="testi-card reveal bg-night text-ivory p-8 lg:p-10 border border-night relative overflow-hidden md:col-span-2 lg:col-span-1">
+        <span class="quote-mark absolute -top-2 left-6" style="color:#D4B98A; opacity:.55;">"</span>
+        <div class="relative">
+          <div class="flex gap-0.5 text-golden text-lg mb-5">★★★★★</div>
+          <p class="font-display text-2xl leading-snug">
+            Salgo de cada sesión con la sensación de que algo se acomodó por dentro. <em class="italic text-golden">Lujo silencioso.</em>
+          </p>
+          <div class="mt-8 pt-6 border-t border-ivory/15 flex items-center gap-3">
+            <div class="w-11 h-11 rounded-full bg-cocoa flex items-center justify-center text-ivory font-medium">LF</div>
+            <div>
+              <p class="text-sm font-medium">Lucía F.</p>
+              <p class="text-[11px] tracking-ultra uppercase text-golden/80 mt-0.5">Wellness Holístico · 45 años</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="testi-card reveal bg-white p-8 lg:p-10 border border-sand relative overflow-hidden">
+        <span class="quote-mark absolute -top-2 left-6">"</span>
+        <div class="relative">
+          <div class="flex gap-0.5 text-gold text-lg mb-5">★★★★★</div>
+          <p class="font-display text-2xl text-night leading-snug">
+            Las manchas que cargaba desde el embarazo se fueron desvaneciendo
+            sin invasividad. La diferencia es real.
+          </p>
+          <div class="mt-8 pt-6 border-t border-sand flex items-center gap-3">
+            <div class="w-11 h-11 rounded-full bg-bone flex items-center justify-center text-cocoa font-medium">MV</div>
+            <div>
+              <p class="text-sm font-medium text-night">Mariana V.</p>
+              <p class="text-[11px] tracking-ultra uppercase text-mocha mt-0.5">Láser Rejuvenecedor · 36 años</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="testi-card reveal bg-white p-8 lg:p-10 border border-sand relative overflow-hidden">
+        <span class="quote-mark absolute -top-2 left-6">"</span>
+        <div class="relative">
+          <div class="flex gap-0.5 text-gold text-lg mb-5">★★★★★</div>
+          <p class="font-display text-2xl text-night leading-snug">
+            Mi cabello recuperó densidad en 8 semanas. El equipo te explica cada paso,
+            sin venderte humo.
+          </p>
+          <div class="mt-8 pt-6 border-t border-sand flex items-center gap-3">
+            <div class="w-11 h-11 rounded-full bg-bone flex items-center justify-center text-cocoa font-medium">AS</div>
+            <div>
+              <p class="text-sm font-medium text-night">Andrea S.</p>
+              <p class="text-[11px] tracking-ultra uppercase text-mocha mt-0.5">Tricoestética · 34 años</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============== PROMOS / META FEED ============== -->
+<section id="promos" class="relative py-28 lg:py-36 bg-ivory">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10">
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-14">
+      <div class="reveal max-w-2xl">
+        <p class="num-tag uppercase mb-4">— 04 / Novedades</p>
+        <h2 class="font-display text-4xl sm:text-5xl lg:text-6xl leading-[1.05] text-night">
+          Lo último desde <span class="italic text-mocha">nuestro feed.</span>
+        </h2>
+        <p class="mt-6 text-cocoa/75 leading-relaxed max-w-lg">
+          Promociones exclusivas, eventos privados y novedades publicadas en vivo desde
+          nuestras redes sociales.
+        </p>
+      </div>
+      <div class="reveal flex items-center gap-4">
+        <a href="#" class="flex items-center gap-2 text-[11px] tracking-ultra uppercase text-cocoa hover:text-gold transition">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+          </svg>
+          @okara.estetica
+        </a>
+        <div class="flex gap-2">
+          <button id="prevSlide" class="w-11 h-11 border border-night/30 hover:bg-night hover:text-ivory transition flex items-center justify-center" aria-label="Anterior">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+          <button id="nextSlide" class="w-11 h-11 border border-night/30 hover:bg-night hover:text-ivory transition flex items-center justify-center" aria-label="Siguiente">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Carousel -->
+    <div class="reveal overflow-hidden">
+      <div id="carouselTrack" class="carousel-track">
+        <!-- Card 1: Instagram -->
+        <article class="carousel-item meta-card bg-white border border-sand">
+          <header class="flex items-center justify-between p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full p-[2px]" style="background: conic-gradient(from 180deg, #B89968, #D4B98A, #8E7C68, #B89968);">
+                <div class="w-full h-full rounded-full bg-white p-[2px]">
+                  <div class="w-full h-full rounded-full bg-bone flex items-center justify-center font-display text-cocoa">O</div>
+                </div>
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-night">okara.estetica</p>
+                <p class="text-[10px] text-mocha">Patrocinado</p>
+              </div>
+            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" class="text-mocha"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
+          </header>
+          <div class="relative aspect-square overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=900&q=80" class="w-full h-full object-cover" alt=""/>
+            <span class="absolute top-3 left-3 bg-night/85 text-ivory text-[10px] tracking-ultra uppercase px-3 py-1.5">Promo Mayo</span>
+          </div>
+          <div class="p-4">
+            <div class="flex items-center gap-4 text-night mb-3">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 10-7.78 7.78l8.84 8.84 8.84-8.84a5.5 5.5 0 000-7.78z"/></svg>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+              <span class="ml-auto"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg></span>
+            </div>
+            <p class="text-[12px] text-night"><span class="font-semibold">1.247 me gusta</span></p>
+            <p class="text-sm text-night mt-2"><span class="font-semibold">okara.estetica</span> Ritual Facial Couture con <span class="text-gold font-medium">30% OFF</span> hasta fin de mes. Una hora y media de pura redefinición. ✨</p>
+            <p class="text-[11px] text-mocha mt-2 uppercase tracking-wider">Hace 2 horas</p>
+          </div>
+        </article>
+
+        <!-- Card 2: Facebook style -->
+        <article class="carousel-item meta-card bg-white border border-sand">
+          <header class="flex items-center justify-between p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-bone flex items-center justify-center font-display text-cocoa">O</div>
+              <div>
+                <p class="text-sm font-semibold text-night flex items-center gap-1.5">Okara · Clínica Estética
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#1877F2"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>
+                </p>
+                <p class="text-[10px] text-mocha">Publicado · Patrocinado</p>
+              </div>
+            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" class="text-mocha"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
+          </header>
+          <div class="px-4 pb-3">
+            <p class="text-sm text-cocoa leading-relaxed">
+              <span class="text-gold font-medium">Nuevo en Okara:</span> Esculpido Corporal HIFU.
+              Remodela sin cirugía y sin pausas en tu vida. Agenda tu valoración gratuita esta semana 🤍
+            </p>
+          </div>
+          <div class="relative aspect-[4/5] overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1591343395082-e120087004b4?auto=format&fit=crop&w=900&q=80" class="w-full h-full object-cover" alt=""/>
+          </div>
+          <div class="p-4 border-t border-sand">
+            <div class="flex items-center justify-between text-[12px] text-mocha mb-2">
+              <span>❤️ 892 reacciones</span>
+              <span>43 comentarios · 18 veces compartido</span>
+            </div>
+            <div class="flex items-center justify-around pt-2 border-t border-sand text-cocoa text-sm">
+              <button class="flex items-center gap-2 hover:text-gold transition"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 22V10M2 12h5v10H2zM17 4l-1 5h6v4l-3 9h-9V10l4-6h3z"/></svg>Me gusta</button>
+              <button class="flex items-center gap-2 hover:text-gold transition"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>Comentar</button>
+              <button class="flex items-center gap-2 hover:text-gold transition"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>Compartir</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 3: Reel -->
+        <article class="carousel-item meta-card bg-white border border-sand">
+          <header class="flex items-center justify-between p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full p-[2px]" style="background: conic-gradient(from 180deg, #B89968, #D4B98A, #8E7C68, #B89968);">
+                <div class="w-full h-full rounded-full bg-white p-[2px]">
+                  <div class="w-full h-full rounded-full bg-bone flex items-center justify-center font-display text-cocoa">O</div>
+                </div>
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-night">okara.estetica · Reel</p>
+                <p class="text-[10px] text-mocha">3.2K reproducciones</p>
+              </div>
+            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" class="text-mocha"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
+          </header>
+          <div class="relative aspect-[3/4] overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=900&q=80" class="w-full h-full object-cover" alt=""/>
+            <div class="absolute inset-0 bg-gradient-to-t from-night/70 to-transparent"></div>
+            <button class="absolute inset-0 flex items-center justify-center">
+              <span class="relative w-16 h-16 rounded-full bg-ivory/95 flex items-center justify-center">
+                <span class="pulse-ring"></span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="#1C1814"><path d="M8 5v14l11-7z"/></svg>
+              </span>
+            </button>
+            <div class="absolute bottom-4 left-4 right-4 text-ivory">
+              <p class="font-display text-xl">Antiage sin filtros</p>
+              <p class="text-xs opacity-80">Mira el proceso real de nuestras pacientes</p>
+            </div>
+          </div>
+          <div class="p-4">
+            <p class="text-sm text-night">
+              <span class="font-semibold">okara.estetica</span> El secreto de un rostro descansado en menos de 30 minutos 🤍
+            </p>
+            <p class="text-[11px] text-mocha mt-2 uppercase tracking-wider">Hace 1 día</p>
+          </div>
+        </article>
+
+        <!-- Card 4: Promo -->
+        <article class="carousel-item meta-card bg-white border border-sand">
+          <header class="flex items-center justify-between p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full p-[2px]" style="background: conic-gradient(from 180deg, #B89968, #D4B98A, #8E7C68, #B89968);">
+                <div class="w-full h-full rounded-full bg-white p-[2px]">
+                  <div class="w-full h-full rounded-full bg-bone flex items-center justify-center font-display text-cocoa">O</div>
+                </div>
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-night">okara.estetica</p>
+                <p class="text-[10px] text-mocha">Patrocinado · Miraflores</p>
+              </div>
+            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" class="text-mocha"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
+          </header>
+          <div class="relative aspect-square overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1620331311520-246422fd82f9?auto=format&fit=crop&w=900&q=80" class="w-full h-full object-cover" alt=""/>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="bg-ivory/95 backdrop-blur-sm px-6 py-4 text-center">
+                <p class="font-display text-2xl text-night">2x1</p>
+                <p class="text-[10px] tracking-ultra uppercase text-mocha mt-1">Láser Rejuvenecedor</p>
+              </div>
+            </div>
+          </div>
+          <div class="p-4">
+            <div class="flex items-center gap-4 text-night mb-3">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 10-7.78 7.78l8.84 8.84 8.84-8.84a5.5 5.5 0 000-7.78z"/></svg>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            </div>
+            <p class="text-[12px] text-night"><span class="font-semibold">2.054 me gusta</span></p>
+            <p class="text-sm text-night mt-2"><span class="font-semibold">okara.estetica</span> Promoción válida solo esta semana. Reserva tu evaluación y vive el ritual Okara.</p>
+            <p class="text-[11px] text-mocha mt-2 uppercase tracking-wider">Hace 3 días</p>
+          </div>
+        </article>
+
+        <!-- Card 5: Story-style -->
+        <article class="carousel-item meta-card bg-white border border-sand">
+          <header class="flex items-center justify-between p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-bone flex items-center justify-center font-display text-cocoa">O</div>
+              <div>
+                <p class="text-sm font-semibold text-night">Okara · Clínica Estética</p>
+                <p class="text-[10px] text-mocha">Evento exclusivo</p>
+              </div>
+            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" class="text-mocha"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
+          </header>
+          <div class="relative aspect-square overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=900&q=80" class="w-full h-full object-cover" alt=""/>
+            <div class="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-night/85 to-transparent text-ivory">
+              <p class="text-[10px] tracking-ultra uppercase text-golden">— Solo invitadas</p>
+              <p class="font-display text-2xl mt-1">Open House Okara</p>
+              <p class="text-xs opacity-80 mt-1">Viernes 7 de junio · 7:00 pm</p>
+            </div>
+          </div>
+          <div class="p-4">
+            <p class="text-sm text-night"><span class="font-semibold">okara.estetica</span> Una noche para descubrir nuestros nuevos protocolos. Cupos limitados.</p>
+            <p class="text-[11px] text-mocha mt-2 uppercase tracking-wider">Hace 5 días</p>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== BLOG EDITORIAL ============== -->
+<section id="blog" class="relative py-28 lg:py-36 bg-bone">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10">
+
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-10 mb-16">
+      <div class="reveal">
+        <p class="num-tag uppercase mb-4">— 05 / Diario Okara</p>
+        <h2 class="font-display text-4xl sm:text-5xl lg:text-6xl leading-[1.05] text-night">
+          Ciencia, piel y <span class="italic text-mocha">elegancia.</span>
+        </h2>
+      </div>
+      <div class="reveal flex items-end justify-between lg:justify-end gap-6 max-w-md">
+        <p class="text-cocoa/75 leading-relaxed">
+          Nuestro diario editorial. Conocimiento médico-estético contado con la calma de una buena revista.
+        </p>
+        <a href="#" class="hidden lg:inline-flex items-center gap-2 text-[11px] tracking-ultra uppercase text-night border-b border-night pb-1 hover:text-gold hover:border-gold transition whitespace-nowrap">
+          Ver todo
+        </a>
+      </div>
+    </div>
+
+    <!-- Featured + secondary articles -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12">
+
+      <!-- Featured -->
+      <a href="#" class="editorial-card reveal lg:col-span-7 group block">
+        <div class="relative overflow-hidden aspect-[16/11] bg-sand mb-6">
+          <img class="ed-img w-full h-full object-cover" src="https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=1400&q=85" alt=""/>
+          <span class="absolute top-5 left-5 bg-ivory/95 text-night text-[10px] tracking-ultra uppercase px-3 py-1.5">Editorial</span>
+        </div>
+        <p class="ed-cat mb-3">Antiage · 9 min de lectura</p>
+        <h3 class="font-display text-3xl lg:text-5xl text-night leading-[1.05] group-hover:text-mocha transition-colors">
+          Bioestimuladores: la nueva era del antiage natural.
+        </h3>
+        <p class="mt-5 text-cocoa/80 leading-relaxed max-w-2xl">
+          Durante años, el antiage estuvo dominado por el <em>"más es más"</em>. Hoy los bioestimuladores
+          marcan un cambio de paradigma: en lugar de rellenar, despiertan al colágeno para que la piel
+          se regenere desde adentro.
+        </p>
+        <div class="mt-6 flex items-center gap-3 text-[11px] tracking-ultra uppercase text-mocha">
+          <span>Por Dr. Quintana</span>
+          <span class="w-1 h-1 rounded-full bg-mocha/50"></span>
+          <span>23 May 2026</span>
+        </div>
+      </a>
+
+      <!-- Secondary list -->
+      <div class="lg:col-span-5 space-y-10">
+
+        <a href="#" class="editorial-card reveal group block">
+          <div class="grid grid-cols-3 gap-5">
+            <div class="relative overflow-hidden aspect-[4/5] bg-sand col-span-1">
+              <img class="ed-img w-full h-full object-cover" src="https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&w=600&q=80" alt=""/>
+            </div>
+            <div class="col-span-2 flex flex-col justify-center">
+              <p class="ed-cat mb-2">Antiage · 5 min</p>
+              <h4 class="font-display text-2xl text-night leading-tight group-hover:text-mocha transition-colors">
+                5 beneficios del ácido hialurónico que no conocías.
+              </h4>
+              <p class="mt-3 text-[11px] tracking-ultra uppercase text-mocha">18 May 2026</p>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" class="editorial-card reveal group block">
+          <div class="grid grid-cols-3 gap-5">
+            <div class="relative overflow-hidden aspect-[4/5] bg-sand col-span-1">
+              <img class="ed-img w-full h-full object-cover" src="https://images.unsplash.com/photo-1620331311520-246422fd82f9?auto=format&fit=crop&w=600&q=80" alt=""/>
+            </div>
+            <div class="col-span-2 flex flex-col justify-center">
+              <p class="ed-cat mb-2">Dermatología · 7 min</p>
+              <h4 class="font-display text-2xl text-night leading-tight group-hover:text-mocha transition-colors">
+                Cómo cuidar tu piel del sol en verano limeño.
+              </h4>
+              <p class="mt-3 text-[11px] tracking-ultra uppercase text-mocha">11 May 2026</p>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" class="editorial-card reveal group block">
+          <div class="grid grid-cols-3 gap-5">
+            <div class="relative overflow-hidden aspect-[4/5] bg-sand col-span-1">
+              <img class="ed-img w-full h-full object-cover" src="https://images.unsplash.com/photo-1591343395082-e120087004b4?auto=format&fit=crop&w=600&q=80" alt=""/>
+            </div>
+            <div class="col-span-2 flex flex-col justify-center">
+              <p class="ed-cat mb-2">Corporal · 6 min</p>
+              <h4 class="font-display text-2xl text-night leading-tight group-hover:text-mocha transition-colors">
+                HIFU vs Radiofrecuencia: ¿qué necesita tu piel?
+              </h4>
+              <p class="mt-3 text-[11px] tracking-ultra uppercase text-mocha">02 May 2026</p>
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </div>
+
+    <div class="reveal mt-14 lg:mt-20 text-center lg:hidden">
+      <a href="#" class="inline-flex items-center gap-2 text-[11px] tracking-ultra uppercase text-night border-b border-night pb-1 hover:text-gold hover:border-gold transition">
+        Ver todo el Diario
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============== CTA / CONTACTO ============== -->
+<section id="contacto" class="relative bg-night text-ivory py-28 lg:py-36 overflow-hidden">
+  <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=2000&q=80"
+       class="absolute inset-0 w-full h-full object-cover opacity-15" alt=""/>
+  <div class="relative max-w-5xl mx-auto px-6 lg:px-10 text-center">
+    <p class="num-tag uppercase mb-4 text-golden">— 06 / Reserva</p>
+    <h2 class="reveal font-display text-4xl sm:text-5xl lg:text-7xl leading-[1.05]">
+      Empieza tu ritual.<br/>
+      <span class="italic text-golden">Reserva tu valoración privada.</span>
+    </h2>
+    <p class="reveal mt-8 text-ivory/75 max-w-2xl mx-auto leading-relaxed">
+      Una hora con nuestro equipo médico para diagnosticar tu piel y diseñar el camino más elegante hacia tu mejor versión.
+    </p>
+    <div class="reveal mt-12 flex flex-wrap items-center justify-center gap-4">
+      <a href="https://wa.me/51999000000" class="btn-primary uppercase text-[11px] px-10 py-4" style="background:#B89968;color:#1C1814;">
+        Agendar por WhatsApp
+      </a>
+      <button onclick="openChat()" class="btn-ghost uppercase text-[11px] px-10 py-4">
+        Hablar con Asesora IA
+      </button>
+    </div>
+
+    <div class="reveal mt-20 grid grid-cols-1 md:grid-cols-3 gap-10 text-left max-w-3xl mx-auto">
+      <div>
+        <p class="text-[10px] tracking-ultra uppercase text-golden mb-3">Visítanos</p>
+        <p class="font-display text-xl">Av. La Paz 123</p>
+        <p class="text-ivory/70 text-sm mt-1">Miraflores, Lima · Perú</p>
+      </div>
+      <div>
+        <p class="text-[10px] tracking-ultra uppercase text-golden mb-3">Conversa</p>
+        <p class="font-display text-xl">+51 999 000 000</p>
+        <p class="text-ivory/70 text-sm mt-1">hola@okara.pe</p>
+      </div>
+      <div>
+        <p class="text-[10px] tracking-ultra uppercase text-golden mb-3">Horario</p>
+        <p class="font-display text-xl">Lun a Sáb</p>
+        <p class="text-ivory/70 text-sm mt-1">10:00 am · 8:00 pm</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer class="bg-night text-ivory/60 border-t border-ivory/10">
+  <div class="max-w-7xl mx-auto px-6 lg:px-10 py-12 flex flex-col md:flex-row items-center justify-between gap-6">
+    <div class="flex items-center gap-4">
+      <span class="font-display text-xl tracking-[.25em] text-ivory">OKARA</span>
+      <span class="text-[10px] tracking-ultra uppercase">© 2026 · Todos los derechos reservados</span>
+    </div>
+    <div class="flex items-center gap-6 text-[10px] tracking-ultra uppercase">
+      <a href="#" class="hover:text-golden transition">Privacidad</a>
+      <a href="#" class="hover:text-golden transition">Términos</a>
+      <a href="#" class="hover:text-golden transition">Instagram</a>
+      <a href="#" class="hover:text-golden transition">Facebook</a>
+      <span class="opacity-30">·</span>
+      <a href="okara-admin.html" class="hover:text-golden transition inline-flex items-center gap-1.5">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Admin
+      </a>
+    </div>
+  </div>
+</footer>
+
+<!-- ============== CHATBOT WIDGET ============== -->
+<!-- FAB -->
+<button id="chatFab" onclick="toggleChat()"
+        class="chat-fab fixed bottom-6 right-6 z-50 flex items-center gap-3 pl-4 pr-5 py-3 rounded-full text-ivory"
+        style="background: linear-gradient(135deg, #1C1814 0%, #3F352B 100%);">
+  <span class="relative w-9 h-9 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #B89968, #D4B98A);">
+    <span class="absolute inset-0 rounded-full pulse-ring" style="background: rgba(184,153,104,.55);"></span>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1C1814" stroke-width="1.5">
+      <path d="M12 2a7 7 0 017 7c0 2.6-1.4 4.9-3.5 6.2V18l-3-1.6c-.16.02-.33.03-.5.03a7 7 0 010-14z"/>
+      <circle cx="9" cy="9" r=".8" fill="#1C1814"/>
+      <circle cx="12" cy="9" r=".8" fill="#1C1814"/>
+      <circle cx="15" cy="9" r=".8" fill="#1C1814"/>
+    </svg>
+  </span>
+  <span class="text-left leading-tight">
+    <span class="block font-display text-base">Asesora Okara</span>
+    <span class="block text-[10px] tracking-ultra uppercase text-ivory/65">IA · En línea</span>
+  </span>
+</button>
+
+<!-- Panel -->
+<div id="chatPanel" class="chat-panel fixed bottom-24 right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] h-[560px] max-h-[calc(100vh-7rem)] bg-ivory flex flex-col overflow-hidden rounded-2xl">
+
+  <!-- Header -->
+  <div class="relative px-5 py-4 text-ivory" style="background: linear-gradient(135deg, #1C1814 0%, #3F352B 80%);">
+    <div class="flex items-center gap-3">
+      <div class="relative w-11 h-11 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #B89968, #D4B98A);">
+        <span class="font-display text-night text-lg">O</span>
+        <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-night"></span>
+      </div>
+      <div class="flex-1">
+        <p class="font-display text-lg leading-tight">Sofía · Asesora Okara</p>
+        <p class="text-[10px] tracking-ultra uppercase text-ivory/65">IA estética · responde al instante</p>
+      </div>
+      <button onclick="toggleChat()" class="text-ivory/70 hover:text-ivory transition" aria-label="Cerrar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div id="chatScroll" class="chat-scroll flex-1 overflow-y-auto px-4 py-5 space-y-3 bg-ivory">
+    <!-- bot welcome -->
+    <div class="flex items-end gap-2">
+      <div class="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center" style="background: linear-gradient(135deg,#B89968,#D4B98A);">
+        <span class="font-display text-night text-xs">O</span>
+      </div>
+      <div class="msg-bubble msg-bot px-4 py-3 text-sm">
+        Hola, soy <strong>Sofía</strong>, tu asesora estética de Okara. 🤍<br/>
+        ¿Te gustaría que te recomiende un tratamiento ideal según lo que buscas hoy?
+      </div>
+    </div>
+
+    <!-- bot follow up -->
+    <div class="flex items-end gap-2">
+      <div class="w-7 h-7 rounded-full flex-shrink-0"></div>
+      <div class="msg-bubble msg-bot px-4 py-3 text-sm">
+        Cuéntame, ¿qué te gustaría trabajar primero?
+      </div>
+    </div>
+
+    <!-- chips -->
+    <div id="quickChips" class="flex flex-wrap gap-2 pt-1 pl-9">
+      <button class="chip text-xs px-3 py-1.5 rounded-full" data-intent="rostro">Rejuvenecer rostro</button>
+      <button class="chip text-xs px-3 py-1.5 rounded-full" data-intent="acne">Acné y manchas</button>
+      <button class="chip text-xs px-3 py-1.5 rounded-full" data-intent="corporal">Esculpido corporal</button>
+      <button class="chip text-xs px-3 py-1.5 rounded-full" data-intent="capilar">Caída de cabello</button>
+      <button class="chip text-xs px-3 py-1.5 rounded-full" data-intent="evento">Lookeada para evento</button>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="border-t border-sand bg-ivory p-3">
+    <form id="chatForm" class="flex items-center gap-2">
+      <input id="chatInput" type="text" placeholder="Escríbele a Sofía…"
+             class="flex-1 bg-bone/60 px-4 py-2.5 text-sm text-night placeholder:text-mocha focus:outline-none focus:ring-2 focus:ring-gold/40 rounded-full"/>
+      <button type="submit" class="w-10 h-10 rounded-full flex items-center justify-center text-ivory transition hover:opacity-90"
+              style="background: linear-gradient(135deg, #B89968, #D4B98A);" aria-label="Enviar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1C1814" stroke-width="1.7"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+      </button>
+    </form>
+    <p class="text-center text-[10px] tracking-ultra uppercase text-mocha mt-2">Confidencial · Powered by Okara AI</p>
+  </div>
+</div>
+
+<!-- ============== SCRIPTS ============== -->
+<script>
+/* Nav scroll style */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 30) nav.classList.add('nav-scrolled');
+  else nav.classList.remove('nav-scrolled');
+});
+
+/* Catálogo: filtros de categoría */
+const catFilters = document.querySelectorAll('#catFilters .cat-filter');
+const catCards = document.querySelectorAll('#catGrid .treatment-card');
+catFilters.forEach(btn => {
+  btn.addEventListener('click', () => {
+    catFilters.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const cat = btn.dataset.cat;
+    catCards.forEach(card => {
+      const match = cat === 'all' || card.dataset.cat === cat;
+      card.classList.toggle('hide-by-filter', !match);
+    });
+  });
+});
+
+/* Reveal on scroll */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  });
+}, { threshold: 0.14 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* Carousel */
+const track = document.getElementById('carouselTrack');
+const prevBtn = document.getElementById('prevSlide');
+const nextBtn = document.getElementById('nextSlide');
+let carIndex = 0;
+
+function itemsPerView() {
+  if (window.innerWidth < 640) return 1;
+  if (window.innerWidth < 900) return 2;
+  return 3;
+}
+function maxIndex() {
+  return Math.max(0, track.children.length - itemsPerView());
+}
+function updateCarousel() {
+  const first = track.children[0];
+  const style = getComputedStyle(track);
+  const gap = parseFloat(style.gap) || 24;
+  const w = first.getBoundingClientRect().width + gap;
+  track.style.transform = `translateX(${-carIndex * w}px)`;
+}
+prevBtn.addEventListener('click', () => { carIndex = Math.max(0, carIndex - 1); updateCarousel(); });
+nextBtn.addEventListener('click', () => { carIndex = Math.min(maxIndex(), carIndex + 1); updateCarousel(); });
+window.addEventListener('resize', () => { carIndex = Math.min(carIndex, maxIndex()); updateCarousel(); });
+
+/* Autoplay carousel (gentle) */
+setInterval(() => {
+  if (document.hidden) return;
+  carIndex = carIndex >= maxIndex() ? 0 : carIndex + 1;
+  updateCarousel();
+}, 5500);
+
+/* ============= CHATBOT ============= */
+const chatPanel  = document.getElementById('chatPanel');
+const chatFab    = document.getElementById('chatFab');
+const chatScroll = document.getElementById('chatScroll');
+const chatForm   = document.getElementById('chatForm');
+const chatInput  = document.getElementById('chatInput');
+const quickChips = document.getElementById('quickChips');
+
+function toggleChat(forceOpen) {
+  const willOpen = forceOpen !== undefined ? forceOpen : !chatPanel.classList.contains('open');
+  chatPanel.classList.toggle('open', willOpen);
+  chatFab.style.display = willOpen ? 'none' : 'flex';
+}
+function openChat() { toggleChat(true); }
+
+function scrollChat() { chatScroll.scrollTop = chatScroll.scrollHeight; }
+
+function addUserMsg(text) {
+  const div = document.createElement('div');
+  div.className = 'flex justify-end';
+  div.innerHTML = `<div class="msg-bubble msg-user px-4 py-3 text-sm">${text}</div>`;
+  chatScroll.appendChild(div); scrollChat();
+}
+
+function addBotMsg(html) {
+  const div = document.createElement('div');
+  div.className = 'flex items-end gap-2';
+  div.innerHTML = `
+    <div class="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center" style="background: linear-gradient(135deg,#B89968,#D4B98A);">
+      <span class="font-display text-night text-xs">O</span>
+    </div>
+    <div class="msg-bubble msg-bot px-4 py-3 text-sm">${html}</div>`;
+  chatScroll.appendChild(div); scrollChat();
+}
+
+function addTyping() {
+  const div = document.createElement('div');
+  div.className = 'flex items-end gap-2';
+  div.id = 'typingIndicator';
+  div.innerHTML = `
+    <div class="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center" style="background: linear-gradient(135deg,#B89968,#D4B98A);">
+      <span class="font-display text-night text-xs">O</span>
+    </div>
+    <div class="msg-bubble msg-bot px-4 py-3"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>`;
+  chatScroll.appendChild(div); scrollChat();
+}
+function removeTyping() {
+  const t = document.getElementById('typingIndicator'); if (t) t.remove();
+}
+
+/* Recommendation engine — visually rich response cards */
+const recos = {
+  rostro: {
+    intro: "Perfecto. Para devolver luz, firmeza y un efecto descansado, te recomendaría comenzar con nuestro <strong>Ritual Facial Couture</strong> y, según diagnóstico, complementar con <strong>Bioestimuladores Antiage</strong>.",
+    title: "Ritual Facial Couture + Antiage Médico",
+    img: "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&w=600&q=80",
+    bullets: ["90 min · totalmente personalizado","Radiofrecuencia + hidratación profunda","Resultados visibles desde la 1° sesión"]
+  },
+  acne: {
+    intro: "Entiendo. Para acné activo y manchas trabajamos un protocolo combinado de <strong>Peeling Médico</strong> y <strong>Láser Rejuvenecedor fraccionado</strong> con seguimiento dermatológico semanal.",
+    title: "Protocolo Piel Clara",
+    img: "https://images.unsplash.com/photo-1620331311520-246422fd82f9?auto=format&fit=crop&w=600&q=80",
+    bullets: ["Diagnóstico dermatológico incluido","4 sesiones recomendadas","Pauta cosmética premium en casa"]
+  },
+  corporal: {
+    intro: "Excelente. Para remodelar contorno sin cirugía, mi recomendación sería <strong>Esculpido HIFU</strong> combinado con drenaje linfático manual.",
+    title: "Esculpido Corporal HIFU",
+    img: "https://images.unsplash.com/photo-1591343395082-e120087004b4?auto=format&fit=crop&w=600&q=80",
+    bullets: ["Sin cirugía, sin reposo","Reducción real de cm desde la 2° sesión","Plan de 3 a 6 sesiones según objetivo"]
+  },
+  capilar: {
+    intro: "Muy bien. Iniciaríamos con un <strong>diagnóstico tricológico digital</strong> y, según el caso, mesoterapia capilar con factores de crecimiento.",
+    title: "Tricoestética Capilar Okara",
+    img: "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=600&q=80",
+    bullets: ["Tricoscopía digital de alta definición","Mesoterapia indolora","Protocolo de 8 semanas"]
+  },
+  evento: {
+    intro: "Adoro la idea ✨. Para una piel impecable el día del evento, te sugeriría nuestro <strong>Glow Express</strong>: hidratación profunda, oxigenoterapia y un toque de luz instantánea.",
+    title: "Glow Express · Pre-evento",
+    img: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=600&q=80",
+    bullets: ["45 min, listo para salir","Sin enrojecimiento posterior","Ideal 48h antes del evento"]
+  }
+};
+
+function botRecoCard(key) {
+  const r = recos[key];
+  return `
+    ${r.intro}
+    <div class="mt-3 -mx-1 bg-white rounded-xl overflow-hidden border border-sand">
+      <div class="aspect-[16/9] overflow-hidden"><img src="${r.img}" class="w-full h-full object-cover" alt=""/></div>
+      <div class="p-3">
+        <p class="font-display text-night text-base leading-tight">${r.title}</p>
+        <ul class="mt-2 space-y-1 text-[12px] text-cocoa/85">
+          ${r.bullets.map(b => `<li class="flex items-start gap-2"><span class="mt-1 inline-block w-1 h-1 rounded-full bg-gold"></span>${b}</li>`).join('')}
+        </ul>
+        <button onclick="document.getElementById('contacto').scrollIntoView({behavior:'smooth'});toggleChat(false);"
+                class="mt-3 w-full text-[11px] tracking-ultra uppercase py-2 rounded-full"
+                style="background:#1C1814;color:#FAF7F2;">
+          Reservar valoración
+        </button>
+      </div>
+    </div>
+    <p class="mt-2 text-[12px] text-mocha">¿Quieres que te muestre disponibilidad esta semana?</p>
+  `;
+}
+
+function handleIntent(intent) {
+  if (!recos[intent]) return false;
+  addTyping();
+  setTimeout(() => {
+    removeTyping();
+    addBotMsg(botRecoCard(intent));
+  }, 1100);
+  return true;
+}
+
+/* Chips */
+quickChips.querySelectorAll('button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const intent = btn.dataset.intent;
+    addUserMsg(btn.textContent);
+    quickChips.style.display = 'none';
+    handleIntent(intent);
+  });
+});
+
+/* Free text */
+function detectIntent(text) {
+  const t = text.toLowerCase();
+  if (/(arruga|antiage|antiedad|rejuven|firmeza|flacidez|botox|relleno)/.test(t)) return 'rostro';
+  if (/(acn[eé]|mancha|cicatriz|poro|brillo)/.test(t)) return 'acne';
+  if (/(cuerpo|abdomen|grasa|celulitis|escult|contorno|hifu)/.test(t)) return 'corporal';
+  if (/(cabello|pelo|alopecia|ca[ií]da|capilar)/.test(t)) return 'capilar';
+  if (/(boda|evento|fiesta|matrimonio|graduaci|express|glow)/.test(t)) return 'evento';
+  return null;
+}
+
+chatForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const val = chatInput.value.trim();
+  if (!val) return;
+  addUserMsg(val);
+  chatInput.value = '';
+  quickChips.style.display = 'none';
+
+  const intent = detectIntent(val);
+  if (intent) {
+    handleIntent(intent);
+  } else {
+    addTyping();
+    setTimeout(() => {
+      removeTyping();
+      addBotMsg(`Gracias por escribirme 🤍. Para recomendarte el ritual más preciso, cuéntame: ¿estás pensando en algo más <strong>facial</strong>, <strong>corporal</strong> o <strong>capilar</strong>?`);
+    }, 900);
+  }
+});
+
+/* Auto-greet pulse: nudge once after 6s */
+setTimeout(() => {
+  if (!chatPanel.classList.contains('open')) {
+    chatFab.animate(
+      [{ transform: 'translateY(0)' }, { transform: 'translateY(-6px)' }, { transform: 'translateY(0)' }],
+      { duration: 1100, iterations: 2, easing: 'ease-in-out' }
+    );
+  }
+}, 6000);
+</script>
+</body>
+</html>
